@@ -1,386 +1,173 @@
 import InputError from '@/components/input-error';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem, DatasetTypes, IndikatorTypes, ParameterDatasetTypes } from '@/types';
+import { BreadcrumbItem, DatasetTypes, JenisTanamanTypes, KriteriaTypes } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
+import { LoaderCircle } from 'lucide-react';
 
 type JenisRumputLaut = {
     nama: string;
     jumlah: number;
 };
 
-type Dataset = {
-    bulan: string;
-    tahun: string;
-    total_panen: number;
-    jenisRumputLaut: JenisRumputLaut[];
-    parameter: {
-        panjangGarisPantai: number;
-        jumlahPetani: number;
-        luasPotensi: number;
-        luasTanam: number;
-        jumlahTali: number;
-        jumlahBibit: number;
-        suhuAir: number;
-        salinitas: number;
-        kejernihanAir: string;
-        cahayaMatahari: string;
-        arusAir: string;
-        kedalamanAir: number;
-        phAir: number;
-        ketersediaanNutrisi: string;
-    };
-};
 
-const daftarBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
-const opsiKejernihan = ['Sangat Jernih', 'Jernih', 'Agak Keruh', 'Keruh', 'Sangat Keruh'];
-const opsiCahaya = ['Sangat Cerah', 'Cerah', 'Berawan', 'Mendung', 'Gelap'];
-const opsiArus = ['Sangat Kuat', 'Kuat', 'Sedang', 'Lemah', 'Sangat Lemah'];
-const opsiNutrisi = ['Melimpah', 'Cukup', 'Terbatas', 'Sangat Sedikit'];
+const opsiLabel = ['Buruk', 'Cukup', 'Baik', 'Sangat Baik'];
 
 interface PropsDatasetView {
-    dataset: DatasetTypes;
     breadcrumb: BreadcrumbItem[];
-    indikator: IndikatorTypes[];
+    kriteria: KriteriaTypes[];
+    jenisTanaman: JenisTanamanTypes[];
     titlePage?: string;
+    dataset?: DatasetTypes; // Added for edit functionality
 }
+type Form = {
+    id: number;
+    jenis_tanaman: string;
+    label: string;
+    attribut: {
+        kriteria_id: number;
+        nilai: string | null;
+    }[];
+};
 
-export default function EditDatasetView({ dataset, breadcrumb, indikator, titlePage }: PropsDatasetView) {
+export default function EditDatasetView({ breadcrumb, kriteria, jenisTanaman, titlePage, dataset }: PropsDatasetView) {
     const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
 
-    const jenisRumputLaut: Array<{ nama: string; jumlah: number }> = JSON.parse(dataset.jenisRumputLaut);
-    const parameter: ParameterDatasetTypes = JSON.parse(dataset.parameter);
-    const { data, setData, put, processing, errors } = useForm<Dataset>({
-        bulan: dataset.bulan,
-        tahun: dataset.tahun,
-        total_panen: dataset.total_panen,
-        jenisRumputLaut: jenisRumputLaut,
-        parameter: parameter,
+    // Initialize form with existing dataset data if available
+    const { data, setData, put, processing, errors } = useForm<Form>({
+        id: dataset?.id ?? 0,
+        jenis_tanaman: dataset?.jenis_tanaman || '',
+        label: dataset?.label || '',
+        attribut: kriteria.map((kriteriaItem, index) => {
+            // Find the existing attribute value if editing
+            const existingAttribut = dataset?.detail.find(attr => attr.kriteria_id === kriteriaItem.id);
+            return {
+                kriteria_id: kriteriaItem.id,
+                nilai: existingAttribut?.nilai || null
+            };
+        }),
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-
-        if (name.includes('jenisRumputLaut')) {
-            const [_, index, field] = name.split('.');
-            const updatedTypes = [...data.jenisRumputLaut];
-            updatedTypes[parseInt(index)] = {
-                ...updatedTypes[parseInt(index)],
-                [field === 'jumlah' ? 'jumlah' : 'nama']: field === 'jumlah' ? parseFloat(value) : value,
-            };
-            setData({ ...data, jenisRumputLaut: updatedTypes });
-        } else if (name.startsWith('parameter.')) {
-            const field = name.split('.')[1];
-            setData({
-                ...data,
-                parameter: {
-                    ...data.parameter,
-                    [field]:
-                        field === 'kejernihanAir' || field === 'cahayaMatahari' || field === 'arusAir' || field === 'ketersediaanNutrisi'
-                            ? value
-                            : parseFloat(value),
-                },
-            });
-        } else {
-            setData({
-                ...data,
-                [name]: value.toString(),
-            });
-        }
+        const key = name.split('.')[1];
+        setData((prevData) => ({
+            ...prevData,
+            attribut: prevData.attribut.map((item, index) => {
+                if (index === Number(key)) {
+                    return {
+                        ...item,
+                        nilai: value,
+                    };
+                }
+                return item;
+            }),
+        }));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Tambahkan logika submit di sini
-        put(route('admin.dataset.update', {dataset: dataset.id}), {
+        // Use put instead of post for update
+        put(route('admin.dataset.update', data.id), {
             onError: (err) => {
                 console.log(err);
+            },
+            onSuccess: () => {
+                // Optional: Add success message or redirect
             },
         });
     };
 
     const handleSelectChange = (name: string, value: string) => {
-        if (name && value !== undefined && data && data.parameter) {
-            if (name === 'bulan') {
+        if (name && value !== undefined && data && data.attribut) {
+            if (name === 'label' || name === 'jenis_tanaman') {
                 setData((prevData) => ({
                     ...prevData,
-                    bulan: value,
+                    [name]: value,
                 }));
             } else {
                 setData((prevData) => ({
                     ...prevData,
-                    parameter: {
-                        ...prevData.parameter,
+                    attribut: {
+                        ...prevData.attribut,
                         [name]: value,
                     },
                 }));
             }
         } else {
-            console.error('Invalid data: name, value, or parameter may be undefined');
+            console.error('Invalid data: name, value, or attribut may be undefined');
         }
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={titlePage ?? 'Edit Data Panen Rumput Laut'} />
+            <Head title={titlePage ?? 'Edit Data Dataset Tanaman'} />
             <div className="mx-auto max-w-7xl rounded-xl border border-gray-100 bg-white p-6 shadow">
-                <h1 className="mb-6 text-center text-xl font-semibold text-primary">Edit Data Panen Rumput Laut</h1>
+                <h1 className="mb-6 text-center text-xl font-semibold text-primary">Edit Data Dataset Tanaman</h1>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Informasi Dasar */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                         <div>
-                            <Label className="text-xs text-gray-600">Bulan</Label>
-                            <Select value={data.bulan} required onValueChange={(value) => handleSelectChange('bulan', value)}>
+                            <Label className="text-xs text-gray-600">Jenis Tanaman</Label>
+                            <Select value={data.jenis_tanaman} required onValueChange={(value) => handleSelectChange('jenis_tanaman', value)}>
                                 <SelectTrigger className="input-minimal">
                                     <SelectValue placeholder="Pilih" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {daftarBulan.map((bulan) => (
-                                        <SelectItem key={bulan} value={bulan}>
-                                            {bulan}
+                                    {jenisTanaman.map((item: any, index) => (
+                                        <SelectItem key={index} value={item.nama}>
+                                            {item.nama}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
-                            {errors.bulan && <InputError message={errors.bulan} className="mt-2" />}
+                            {errors.jenis_tanaman && <InputError message={errors.jenis_tanaman} className="mt-2" />}
                         </div>
                         <div>
-                            <Label className="text-xs text-gray-600">Tahun</Label>
-                            <Input type="number" name="tahun" value={data.tahun} onChange={handleChange} className="input-minimal" required />
-                            {errors.tahun && <InputError message={errors.tahun} className="mt-2" />}
-                        </div>
-                        <div>
-                            <Label className="text-xs text-gray-600">Total Panen (kg)</Label>
-                            <Input
-                                type="number"
-                                name="total_panen"
-                                value={data.total_panen}
-                                onChange={handleChange}
-                                className="input-minimal"
-                                step="0.01"
-                                required
-                            />
-                            {errors.total_panen && <InputError message={errors.total_panen} className="mt-2" />}
-                        </div>
-                    </div>
-
-                    {/* Jenis Rumput Laut */}
-                    <div>
-                        <Label className="text-xs text-gray-600">Jenis Rumput Laut</Label>
-                        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                            {data.jenisRumputLaut.map((jenis, index) => (
-                                <div key={index} className="flex items-center gap-2 rounded bg-gray-50 p-2">
-                                    <Input
-                                        type="text"
-                                        name={`jenisRumputLaut.${index}.nama`}
-                                        value={jenis.nama}
-                                        onChange={handleChange}
-                                        className="input-minimal w-32"
-                                        readOnly
-                                        placeholder={`Jenis ${index + 1}`}
-                                    />
-                                    <Input
-                                        type="number"
-                                        name={`jenisRumputLaut.${index}.jumlah`}
-                                        value={jenis.jumlah}
-                                        onChange={handleChange}
-                                        className="input-minimal flex-1"
-                                        placeholder="kg"
-                                        step="0.01"
-                                    />
-                                </div>
-                            ))}
-                            {errors.jenisRumputLaut && <InputError message={errors.jenisRumputLaut} className="mt-2" />}
+                            <Label className="text-xs text-gray-600">Label</Label>
+                            <Select value={data.label} required onValueChange={(value) => handleSelectChange('label', value)}>
+                                <SelectTrigger className="input-minimal">
+                                    <SelectValue placeholder="Pilih" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {opsiLabel.map((item: any, index) => (
+                                        <SelectItem key={index} value={item}>
+                                            {item}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {errors.label && <InputError message={errors.label} className="mt-2" />}
                         </div>
                     </div>
 
                     {/* Parameter Lingkungan */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <div>
-                                <Label className="text-xs text-gray-600">Panjang Garis Pantai (km)</Label>
-                                <Input
-                                    type="number"
-                                    name="parameter.panjangGarisPantai"
-                                    value={data.parameter.panjangGarisPantai}
-                                    onChange={handleChange}
-                                    className="input-minimal"
-                                    step="0.01"
-                                />
-                            </div>
-                            <div>
-                                <Label className="text-xs text-gray-600">Jumlah Petani</Label>
-                                <Input
-                                    type="number"
-                                    name="parameter.jumlahPetani"
-                                    value={data.parameter.jumlahPetani}
-                                    onChange={handleChange}
-                                    className="input-minimal"
-                                />
-                            </div>
-                            <div>
-                                <Label className="text-xs text-gray-600">Luas Potensi (Ha)</Label>
-                                <Input
-                                    type="number"
-                                    name="parameter.luasPotensi"
-                                    value={data.parameter.luasPotensi}
-                                    onChange={handleChange}
-                                    className="input-minimal"
-                                    step="0.01"
-                                />
-                            </div>
-                            <div>
-                                <Label className="text-xs text-gray-600">Luas Tanam (Ha)</Label>
-                                <Input
-                                    type="number"
-                                    name="parameter.luasTanam"
-                                    value={data.parameter.luasTanam}
-                                    onChange={handleChange}
-                                    className="input-minimal"
-                                    step="0.01"
-                                />
-                            </div>
-                            <div>
-                                <Label className="text-xs text-gray-600">Jumlah Tali</Label>
-                                <Input
-                                    type="number"
-                                    name="parameter.jumlahTali"
-                                    value={data.parameter.jumlahTali}
-                                    onChange={handleChange}
-                                    className="input-minimal"
-                                />
-                            </div>
-                            <div>
-                                <Label className="text-xs text-gray-600">Bibit (kg)</Label>
-                                <Input
-                                    type="number"
-                                    name="parameter.jumlahBibit"
-                                    value={data.parameter.jumlahBibit}
-                                    onChange={handleChange}
-                                    className="input-minimal"
-                                    step="0.01"
-                                />
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <div>
-                                <Label className="text-xs text-gray-600">Suhu Air (°C)</Label>
-                                <Input
-                                    type="number"
-                                    name="parameter.suhuAir"
-                                    value={data.parameter.suhuAir}
-                                    onChange={handleChange}
-                                    className="input-minimal"
-                                    step="0.1"
-                                />
-                            </div>
-                            <div>
-                                <Label className="text-xs text-gray-600">Salinitas (ppt)</Label>
-                                <Input
-                                    type="number"
-                                    name="parameter.salinitas"
-                                    value={data.parameter.salinitas}
-                                    onChange={handleChange}
-                                    className="input-minimal"
-                                    step="0.1"
-                                />
-                            </div>
-                            <div>
-                                <Label className="text-xs text-gray-600">Kejernihan Air</Label>
-                                <Select value={data.parameter.kejernihanAir} onValueChange={(value) => handleSelectChange('kejernihanAir', value)}>
-                                    <SelectTrigger className="input-minimal">
-                                        <SelectValue placeholder="Pilih" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {opsiKejernihan.map((option) => (
-                                            <SelectItem key={option} value={option}>
-                                                {option}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div>
-                                <Label className="text-xs text-gray-600">Cahaya Matahari</Label>
-                                <Select value={data.parameter.cahayaMatahari} onValueChange={(value) => handleSelectChange('cahayaMatahari', value)}>
-                                    <SelectTrigger className="input-minimal">
-                                        <SelectValue placeholder="Pilih" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {opsiCahaya.map((option) => (
-                                            <SelectItem key={option} value={option}>
-                                                {option}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div>
-                                <Label className="text-xs text-gray-600">Arus Air</Label>
-                                <Select value={data.parameter.arusAir} onValueChange={(value) => handleSelectChange('arusAir', value)}>
-                                    <SelectTrigger className="input-minimal">
-                                        <SelectValue placeholder="Pilih" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {opsiArus.map((option) => (
-                                            <SelectItem key={option} value={option}>
-                                                {option}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div>
-                                <Label className="text-xs text-gray-600">Kedalaman Air (m)</Label>
-                                <Input
-                                    type="number"
-                                    name="parameter.kedalamanAir"
-                                    value={data.parameter.kedalamanAir}
-                                    onChange={handleChange}
-                                    className="input-minimal"
-                                    step="0.1"
-                                />
-                            </div>
-                            <div>
-                                <Label className="text-xs text-gray-600">pH Air</Label>
-                                <Input
-                                    type="number"
-                                    name="parameter.phAir"
-                                    value={data.parameter.phAir}
-                                    onChange={handleChange}
-                                    className="input-minimal"
-                                    step="0.1"
-                                    min="0"
-                                    max="14"
-                                />
-                            </div>
-                            <div>
-                                <Label className="text-xs text-gray-600">Ketersediaan Nutrisi</Label>
-                                <Select
-                                    value={data.parameter.ketersediaanNutrisi}
-                                    onValueChange={(value) => handleSelectChange('ketersediaanNutrisi', value)}
-                                >
-                                    <SelectTrigger className="input-minimal">
-                                        <SelectValue placeholder="Pilih" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {opsiNutrisi.map((option) => (
-                                            <SelectItem key={option} value={option}>
-                                                {option}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
+                        {kriteria.map((item: any, index: number) => {
+                            return (
+                                <div key={index}>
+                                    <Label className="text-xs text-gray-600">{item.nama}</Label>
+                                    <Input
+                                        type="text"
+                                        name={`attribut.${index}`}
+                                        value={data.attribut[index].nilai || ''}
+                                        onChange={handleChange}
+                                        className="input-minimal"
+                                        placeholder={`masukkan ${item.nama}`}
+                                    />
+                                </div>
+                            );
+                        })}
                     </div>
                     <div className="flex justify-end">
-                        <button type="submit" className="hover:bg-primary-dark rounded bg-primary px-6 py-2 font-medium text-white transition">
-                            Simpan Data
-                        </button>
+                        <Button type="submit" variant={'default'}>
+                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                            Update Data
+                        </Button>
                     </div>
                 </form>
             </div>

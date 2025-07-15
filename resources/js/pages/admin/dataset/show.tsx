@@ -51,12 +51,12 @@ export default function HarvestDetailPage({ dataset, breadcrumb, titlePage }: Ha
                             <h3 className="text-lg font-medium text-gray-500">Data Kelas</h3>
                             <div className="mt-4 space-y-3">
                                 <div className="flex justify-between">
-                                    <span className="text-sm text-gray-600">Jenis Tanaman</span>
-                                    <span className="text-sm font-medium">{data.jenis_tanaman} Ha</span>
+                                    <span className="text-base text-gray-600">Jenis Tanaman</span>
+                                    <span className="text-base font-medium">{data.jenis_tanaman} Ha</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-sm text-gray-600">Label (Nutrisi)</span>
-                                    <span className="text-sm font-medium">{data.label}</span>
+                                    <span className="text-base text-gray-600">Label (Nutrisi)</span>
+                                    <span className="text-base font-medium">{data.label}</span>
                                 </div>
                             </div>
                         </div>
@@ -66,9 +66,9 @@ export default function HarvestDetailPage({ dataset, breadcrumb, titlePage }: Ha
                             <h3 className="text-sm font-medium text-gray-500">Detail Tanaman</h3>
                             <div className="mt-4 space-y-3">
                                 {data.detail.map((item, index) => (
-                                    <div className="flex justify-between">
-                                        <span className="text-sm text-gray-600">{item.kriteria.nama}</span>
-                                        <span className="text-sm font-medium">{item.nilai} °C</span>
+                                    <div className="flex justify-between border-b-2">
+                                        <span className="text-base text-gray-800">{item.kriteria.nama}</span>
+                                        <span className="text-base font-medium">{item.nilai}</span>
                                     </div>
                                 ))}
                             </div>

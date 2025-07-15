@@ -102,7 +102,16 @@ class DatasetController extends Controller
      */
     public function edit(Dataset $dataset)
     {
-        //
+        $dataset->load(['detail', 'detail.kriteria']);
+        return Inertia::render('admin/dataset/edit', [
+            'dataset' => $dataset,
+            'kriteria' => Kriteria::all(),
+            'jenisTanaman' => JenisTanaman::all(),
+            'breadrumb' => array_merge(self::BASE_BREADCRUMB, [[
+                "title" => 'edit',
+                'href' => 'admin/dataset/edit',
+            ]])
+        ]);
     }
 
     /**
@@ -110,7 +119,32 @@ class DatasetController extends Controller
      */
     public function update(UpdateDatasetRequest $request, Dataset $dataset)
     {
-        //
+        $databaseHelper = App::make('databaseHelper');
+        return $databaseHelper(
+            operation: fn() => $this->editDataset($request->validated(), $dataset),
+            successMessage: 'Dataset Berhasil Di Ubah!',
+            redirectRoute: 'admin.dataset.index'
+        );
+    }
+
+    private function editDataset($request, $dataset)
+    {
+        $dataset->label = $request['label'];
+        $dataset->jenis_tanaman = $request['jenis_tanaman'];
+        $dataset->data = json_encode($request['attribut']);
+        $dataset->save();
+
+        DetailDataset::where('dataset_id', $dataset->id)->delete();
+
+        for ($i = 0; $i < count($request['attribut']); $i++) {
+            $attribut =  $request['attribut'][$i];
+
+            DetailDataset::create([
+                'kriteria_id' =>  $attribut['kriteria_id'],
+                'dataset_id' =>  $dataset->id,
+                'nilai' =>  $attribut['nilai'],
+            ]);
+        }
     }
 
     /**

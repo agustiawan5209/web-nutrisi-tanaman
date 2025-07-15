@@ -1,10 +1,12 @@
 import InputError from '@/components/input-error';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem, JenisTanamanTypes, KriteriaTypes } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
+import { LoaderCircle } from 'lucide-react';
 
 type JenisRumputLaut = {
     nama: string;
@@ -158,30 +160,14 @@ export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
                         })}
                     </div>
                     <div className="flex justify-end">
-                        <button type="submit" className="hover:bg-primary-dark rounded bg-primary px-6 py-2 font-medium text-white transition">
+                        <Button type="submit" variant={'default'}>
+
+                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                             Simpan Data
-                        </button>
+                        </Button>
                     </div>
                 </form>
             </div>
-            <style>{`
-                .input-minimal {
-                    background: #f9fafb;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 8px;
-                    padding: 8px 12px;
-                    font-size: 14px;
-                    outline: none;
-                    transition: border 0.2s;
-                }
-                .input-minimal:focus {
-                    border-color: var(--color-primary, #2563eb);
-                    background: #fff;
-                }
-                .bg-primary { background-color: var(--color-primary, #2563eb); }
-                .bg-primary-dark { background-color: var(--color-primary-dark, #1d4ed8); }
-                .text-primary { color: var(--color-primary, #2563eb); }
-            `}</style>
         </AppLayout>
     );
 }
