@@ -57,3 +57,18 @@ export interface JenisTanamanTypes{
     nama: string;
     deskripsi: string;
 }
+
+
+export interface DatasetTypes{
+    id: number;
+    jenis_tanaman:string;
+    label:string;
+    data: string[];
+}
+
+export interface DetailDatasetTypes{
+    id: number;
+    kriteria_id: number;
+    dataset_id: number;
+    nilai: string;
+}

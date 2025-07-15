@@ -55,13 +55,13 @@ const opsiNutrisi = [
     { value: 2, label: 'Terbatas' },
     { value: 1, label: 'Sangat Sedikit' },
 ];
-interface PropsPanenRumputLaut {
+interface PropsDatasetView {
     parameter: Transaction;
     handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
     handleSelectChange: (name: string, value: string) => void;
 }
 
-export default function FormPanen({ parameter, handleChange, handleSelectChange }: PropsPanenRumputLaut) {
+export default function FormPanen({ parameter, handleChange, handleSelectChange }: PropsDatasetView) {
     return (
         <>
             <div className="col-span-2 grid grid-cols-1 gap-4 md:grid-cols-2">

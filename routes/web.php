@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DatasetController;
 use App\Http\Controllers\JenisTanamanController;
 use App\Http\Controllers\KriteriaController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/{jenisTanaman}/edit', 'edit')->name('edit');
                 Route::put('/{jenisTanaman}', 'update')->name('update');
                 Route::delete('/{jenisTanaman}', 'destroy')->name('destroy');
+            });
+        });
+        // Route for training dataset
+        Route::group(['prefix' => 'dataset', 'as' => 'dataset.'], function () {
+            Route::controller(DatasetController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/create', 'create')->name('create');
+                Route::post('/', 'store')->name('store');
+                Route::get('/{dataset}/edit', 'edit')->name('edit');
+                Route::put('/{dataset}', 'update')->name('update');
+                Route::delete('/{dataset}', 'destroy')->name('destroy');
             });
         });
     });
