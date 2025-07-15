@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\App;
 use App\Http\Requests\StoreDatasetRequest;
 use App\Http\Requests\UpdateDatasetRequest;
 use App\Models\DetailDataset;
+use App\Models\JenisTanaman;
 
 class DatasetController extends Controller
 {
@@ -42,6 +43,7 @@ class DatasetController extends Controller
     {
         return Inertia::render("admin/dataset/create", [
             'kriteria' => Kriteria::all(),
+            'jenisTanaman' => JenisTanaman::all(),
             'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 ['title' => 'tambah', 'href' => '/admin/dataset/create'],
             ])
@@ -56,21 +58,21 @@ class DatasetController extends Controller
         $databaseHelper = App::make('databaseHelper');
         return $databaseHelper(
             operation: fn() => $this->addDataset($request->validated()),
-            successMessage: 'Kategori Berhasil Ditambahkan!',
-            redirectRoute: 'admin.jenisTanaman.index'
+            successMessage: 'Dataset Berhasil Ditambahkan!',
+            redirectRoute: 'admin.dataset.index'
         );
     }
 
     private function addDataset($request)
     {
         $dataset = new Dataset();
-        $dataset->label = $request->label;
-        $dataset->jenis_tanaman = $request->jenis_tanaman;
-        $dataset->data = json_encode($request->attribut);
+        $dataset->label = $request['label'];
+        $dataset->jenis_tanaman = $request['jenis_tanaman'];
+        $dataset->data = json_encode($request['attribut']);
         $dataset->save();
 
-        for ($i = 0; $i < count($request->attribut); $i++) {
-            $attribut =  $request->attribut;
+        for ($i = 0; $i < count($request['attribut']); $i++) {
+            $attribut =  $request['attribut'][$i];
 
             DetailDataset::create([
                 'kriteria_id' =>  $attribut['kriteria_id'],
@@ -85,7 +87,7 @@ class DatasetController extends Controller
      */
     public function show(Dataset $dataset)
     {
-        $dataset->load(['detail']);
+        $dataset->load(['detail', 'detail.kriteria']);
         return Inertia::render('admin/dataset/show', [
             'dataset' => $dataset,
             'breadrumb' => array_merge(self::BASE_BREADCRUMB, [[

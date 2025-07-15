@@ -64,6 +64,8 @@ export interface DatasetTypes{
     jenis_tanaman:string;
     label:string;
     data: string[];
+    created_at?: string;
+    detail: DetailDatasetTypes[];
 }
 
 export interface DetailDatasetTypes{
@@ -71,4 +73,5 @@ export interface DetailDatasetTypes{
     kriteria_id: number;
     dataset_id: number;
     nilai: string;
+    kriteria: KriteriaTypes;
 }

@@ -49,6 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/create', 'create')->name('create');
                 Route::post('/', 'store')->name('store');
                 Route::get('/{dataset}/edit', 'edit')->name('edit');
+                Route::get('/{dataset}/show', 'show')->name('show');
                 Route::put('/{dataset}', 'update')->name('update');
                 Route::delete('/{dataset}', 'destroy')->name('destroy');
             });

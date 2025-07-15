@@ -18,6 +18,7 @@ class Dataset extends Model
 
     protected $casts = [
         'data'=> 'json',
+        'created_at'=> 'datetime',
     ];
 
     public function detail(){

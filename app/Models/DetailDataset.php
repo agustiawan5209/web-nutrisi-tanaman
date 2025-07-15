@@ -21,4 +21,8 @@ class DetailDataset extends Model
     {
         return $this->belongsTo(Dataset::class);
     }
+    public function kriteria()
+    {
+        return $this->belongsTo(Kriteria::class);
+    }
 }
