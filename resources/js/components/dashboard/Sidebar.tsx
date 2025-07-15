@@ -3,7 +3,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, FileText, HelpCircle, Home, Leaf, Settings, Sliders } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import { BarChart2Icon, ChevronLeft, ChevronRight, FileText, HelpCircle, Home, Leaf, Settings, Sliders } from 'lucide-react';
 import { useState } from 'react';
 import { NavUser } from '../nav-user';
 
@@ -15,6 +16,8 @@ interface SidebarProps {
 
 const Sidebar = ({ className, collapsed = false, onToggleCollapse }: SidebarProps) => {
     const [isCollapsed, setIsCollapsed] = useState(collapsed);
+     const activeSection = usePage().url.split('/').pop() || 'Dashboard';
+    console.log('Active Section:', activeSection);
 
     const handleToggleCollapse = () => {
         const newCollapsedState = !isCollapsed;
@@ -25,11 +28,9 @@ const Sidebar = ({ className, collapsed = false, onToggleCollapse }: SidebarProp
     };
 
     const navItems = [
-        { name: 'Dashboard', icon: <Home size={20} />, active: true },
-        { name: 'System Controls', icon: <Sliders size={20} />, active: false },
-        { name: 'Settings', icon: <Settings size={20} />, active: false },
-        { name: 'Reports', icon: <FileText size={20} />, active: false },
-        { name: 'Help', icon: <HelpCircle size={20} />, active: false },
+        { name: 'Dashboard', icon: <Home size={20} />, href: route('dashboard'), active: 'dashboard' },
+        { name: 'Kriteria', icon: <BarChart2Icon size={20} />, href: route('admin.kriteria.index'), active: 'kriterias' },
+
     ];
 
     return (
@@ -54,20 +55,27 @@ const Sidebar = ({ className, collapsed = false, onToggleCollapse }: SidebarProp
                         <ul className="space-y-2">
                             {navItems.map((item) => (
                                 <li key={item.name}>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <Button
-                                                variant={item.active ? 'secondary' : 'ghost'}
-                                                className={cn('w-full justify-start', isCollapsed ? 'px-2' : 'px-3')}
-                                            >
-                                                <span className="flex items-center">
-                                                    <span className={cn(item.active ? 'text-primary' : 'text-muted-foreground')}>{item.icon}</span>
-                                                    {!isCollapsed && <span className="ml-3">{item.name}</span>}
-                                                </span>
-                                            </Button>
-                                        </TooltipTrigger>
-                                        {isCollapsed && <TooltipContent side="right">{item.name}</TooltipContent>}
-                                    </Tooltip>
+                                    <Link
+                                        href={item.href}
+                                        className={cn('flex items-center', item.active == activeSection ? 'text-primary' : 'text-foreground')}
+                                    >
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button
+                                                    variant={item.active == activeSection ? 'secondary' : 'ghost'}
+                                                    className={cn('w-full justify-start', isCollapsed ? 'px-2' : 'px-3')}
+                                                >
+                                                    <span className="flex items-center">
+                                                        <span className={cn(item.active == activeSection ? 'text-primary' : 'text-foreground')}>
+                                                            {item.icon}
+                                                        </span>
+                                                        {!isCollapsed && <span className="ml-3">{item.name}</span>}
+                                                    </span>
+                                                </Button>
+                                            </TooltipTrigger>
+                                            {isCollapsed && <TooltipContent side="right">{item.name}</TooltipContent>}
+                                        </Tooltip>
+                                    </Link>
                                 </li>
                             ))}
                         </ul>

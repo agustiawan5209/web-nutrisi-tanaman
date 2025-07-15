@@ -8,8 +8,7 @@ import { usePage } from '@inertiajs/react';
 import { useEffect, useState, type PropsWithChildren } from 'react';
 
 export default function AppSidebarLayout({ children, breadcrumbs = [] }: PropsWithChildren<{ breadcrumbs?: BreadcrumbItem[] }>) {
-    const activeSection = usePage().url.split('/').pop() || 'Dashboard';
-    // console.log('Active Section:', activeSection);
+
 
     const navigationItems = [{ title: 'Dashboard', href: '/dashboard', icon: BarChart3 }];
 
@@ -65,7 +64,7 @@ export default function AppSidebarLayout({ children, breadcrumbs = [] }: PropsWi
             <Sidebar />
 
             {/* Main Content */}
-            <main className="flex-1 overflow-auto p-6">
+            <main className="flex-1 overflow-auto">
                 <header className="sticky top-0 z-20 flex h-16 items-center gap-2 border-b border-sidebar-border/50 bg-background px-4 md:px-6">
                     <Breadcrumbs breadcrumbs={breadcrumbs} />
                 </header>

@@ -78,7 +78,7 @@ class KriteriaController extends Controller
         return $databaseHelper(
             operation: fn() => Kriteria::create([
                 'nama' => $request->nama,
-                'keterangan' => $request->keterangan,
+                'deskripsi' => $request->deskripsi,
             ]),
             successMessage: 'Kategori Berhasil Ditambahkan!',
             redirectRoute: 'admin.kriteria.index'
@@ -127,7 +127,7 @@ class KriteriaController extends Controller
         return $databaseHelper(
             operation: fn() => $kriteria->update([
                 'nama'=> $request->nama,
-                'keterangan'=> $request->keterangan,
+                'deskripsi'=> $request->deskripsi,
             ]),
             successMessage: 'Kategori Berhasil Di Update!',
             redirectRoute: 'admin.kriteria.index'

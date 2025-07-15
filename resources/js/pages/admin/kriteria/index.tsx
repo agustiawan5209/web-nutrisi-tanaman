@@ -7,31 +7,31 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem, IndikatorTypes } from '@/types';
+import { BreadcrumbItem, KriteriaTypes } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle, PenBox } from 'lucide-react';
 import { useMemo, useState } from 'react';
-interface IndikatorIndexProps {
-    indikator: IndikatorTypes[];
+interface KriteriaIndexProps {
+    kriteria: KriteriaTypes[];
     breadcrumb?: BreadcrumbItem[];
     titlePage?: string;
 }
-type indikatorFormData = {
+type kriteriaFormData = {
     id: number | null;
     nama: string;
-    keterangan: string;
+    deskripsi: string;
 };
 
-export default function IndikatorIndex({ indikator, breadcrumb, titlePage }: IndikatorIndexProps) {
+export default function KriteriaIndex({ kriteria, breadcrumb, titlePage }: KriteriaIndexProps) {
     const breadcrumbs: BreadcrumbItem[] = useMemo(
         () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
         [breadcrumb],
     );
 
-    const { data, setData, get, post, put, processing, errors } = useForm<indikatorFormData>({
+    const { data, setData, get, post, put, processing, errors } = useForm<kriteriaFormData>({
         id: null,
         nama: '',
-        keterangan: '',
+        deskripsi: '',
     });
 
     const [editId, setEditId] = useState<number | null>(null);
@@ -40,13 +40,13 @@ export default function IndikatorIndex({ indikator, breadcrumb, titlePage }: Ind
         e.preventDefault();
 
         if (editId == null) {
-            post(route('admin.indikator.store'), {
+            post(route('admin.kriteria.store'), {
                 preserveState: true,
                 onSuccess: () => {
                     setData({
                         id: null,
                         nama: '',
-                        keterangan: '',
+                        deskripsi: '',
                     });
                     setIsOpenDialog(false);
                 },
@@ -55,13 +55,13 @@ export default function IndikatorIndex({ indikator, breadcrumb, titlePage }: Ind
                 },
             });
         } else {
-            put(route('admin.indikator.update', editId), {
+            put(route('admin.kriteria.update', {kriteria: editId}), {
                 preserveState: true,
                 onSuccess: () => {
                     setData({
                         id: null,
                         nama: '',
-                        keterangan: '',
+                        deskripsi: '',
                     });
                     setEditId(null);
                     setIsOpenDialog(false);
@@ -77,13 +77,13 @@ export default function IndikatorIndex({ indikator, breadcrumb, titlePage }: Ind
 
     const handleEdit = (id: number) => {
         if (id) {
-            const indikatorTemp: IndikatorTypes[] = indikator.filter((item) => item.id === id, []);
-            setEditId(indikatorTemp[0].id);
-            if (indikatorTemp) {
+            const kriteriaTemp: KriteriaTypes[] = kriteria.filter((item) => item.id === id, []);
+            setEditId(kriteriaTemp[0].id);
+            if (kriteriaTemp) {
                 setData({
-                    id: indikatorTemp[0].id,
-                    nama: indikatorTemp[0].nama,
-                    keterangan: indikatorTemp[0].keterangan,
+                    id: kriteriaTemp[0].id,
+                    nama: kriteriaTemp[0].nama,
+                    deskripsi: kriteriaTemp[0].deskripsi,
                 });
             }
             setIsOpenDialog(true);
@@ -94,36 +94,36 @@ export default function IndikatorIndex({ indikator, breadcrumb, titlePage }: Ind
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={titlePage ?? 'Indikator'} />
+            <Head title={titlePage ?? 'Kriteria'} />
 
             {/* Data */}
             <Card>
                 <div className="container mx-auto px-4">
                     <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <h2 className="text-lg font-bold md:text-xl">Parameter Prediksi Rumput Laut</h2>
+                        <h2 className="text-lg font-bold md:text-xl">Kriteria Nutrisi Tanaman</h2>
                         <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
                             <Button variant={'default'} type="button" className="cursor-pointer" onClick={() => setIsOpenDialog(true)}>
                                 Tambah Data
                             </Button>
                         </div>
                     </div>
-                    <div className="overflow-x-auto rounded-md border">
+                    <div className="overflow-x-auto rounded-sm border">
                         <Table className="min-w-full">
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="cursor-pointer">no</TableHead>
                                     <TableHead className="cursor-pointer">Nama</TableHead>
-                                    <TableHead className="cursor-pointer">keterangan</TableHead>
+                                    <TableHead className="cursor-pointer">deskripsi</TableHead>
                                     <TableHead className="cursor-pointer">Aksi</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {indikator.length > 0 ? (
-                                    indikator.map((item, index) => (
+                                {kriteria.length > 0 ? (
+                                    kriteria.map((item, index) => (
                                         <TableRow key={item.id}>
                                             <TableCell>{index + 1}</TableCell>
                                             <TableCell>{item.nama}</TableCell>
-                                            <TableCell>{item.keterangan}</TableCell>
+                                            <TableCell>{item.deskripsi}</TableCell>
                                             <TableCell>
                                                 <div className="flex flex-row items-center gap-2">
                                                     <Button
@@ -138,9 +138,10 @@ export default function IndikatorIndex({ indikator, breadcrumb, titlePage }: Ind
                                                     </Button>
 
                                                     <DeleteConfirmationForm
-                                                        title={`Hapus indikator ${item.id}`}
+                                                        title={`Hapus kriteria ${item.id}`}
                                                         id={item.id}
-                                                        url={'admin.indikator.destroy'}
+                                                        url={route('admin.kriteria.destroy', { kriteria: item.id })}
+                                                        param={{ kriteria: item.id }}
                                                         setOpenDialog={setisDeleteDialog}
                                                     />
                                                 </div>
@@ -163,13 +164,13 @@ export default function IndikatorIndex({ indikator, breadcrumb, titlePage }: Ind
             <Dialog open={isOpenDialog} onOpenChange={setIsOpenDialog}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>{editId ? `Edit` : `Tambah`} Indikator</DialogTitle>
+                        <DialogTitle>{editId ? `Edit` : `Tambah`} Kriteria</DialogTitle>
                     </DialogHeader>
                     <form className="space-y-4" onSubmit={submit}>
                         <div className="grid gap-4">
                             <div className="grid gap-2">
                                 <Label htmlFor="nama" className="text-sm font-medium">
-                                    Nama Indikator
+                                    Nama Kriteria
                                 </Label>
                                 <Input
                                     type="text"
@@ -179,25 +180,25 @@ export default function IndikatorIndex({ indikator, breadcrumb, titlePage }: Ind
                                     name="nama"
                                     className="input"
                                     disabled={processing}
-                                    placeholder="Masukkan nama indikator"
+                                    placeholder="Masukkan nama kriteria"
                                 />
                                 <InputError message={errors.nama} className="mt-2" />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="keterangan" className="text-sm font-medium">
+                                <Label htmlFor="deskripsi" className="text-sm font-medium">
                                     Keterangan
                                 </Label>
                                 <Input
                                     type="text"
-                                    value={data.keterangan}
-                                    onChange={(e) => setData('keterangan', e.target.value)}
-                                    id="keterangan"
-                                    name="keterangan"
+                                    value={data.deskripsi}
+                                    onChange={(e) => setData('deskripsi', e.target.value)}
+                                    id="deskripsi"
+                                    name="deskripsi"
                                     className="input"
                                     disabled={processing}
-                                    placeholder="Masukkan keterangan indikator"
+                                    placeholder="Masukkan deskripsi kriteria"
                                 />
-                                <InputError message={errors.keterangan} className="mt-2" />
+                                <InputError message={errors.deskripsi} className="mt-2" />
                             </div>
                         </div>
                         <DialogFooter>

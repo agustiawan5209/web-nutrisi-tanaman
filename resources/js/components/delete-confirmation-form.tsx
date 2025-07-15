@@ -9,6 +9,7 @@ interface DeleteConfirmationFormProps {
     title: string;
     id: number | null;
     setOpenDialog: (value: boolean) => void;
+    param: object;
 }
 type indikatorFormData = {
     id: number | null;
@@ -16,13 +17,12 @@ type indikatorFormData = {
     keterangan: string;
 };
 
-export const DeleteConfirmationForm = ({ url, title, id }: DeleteConfirmationFormProps) => {
+export const DeleteConfirmationForm = ({ url, title, id, param }: DeleteConfirmationFormProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const { data, setData, delete: destroy, processing, errors } = useForm();
     const deleteSubmit = () => {
-        console.log('delete', id)
         if (id) {
-            destroy(route(url, {indikator: id}), {
+            destroy(url, {
                 preserveState: true,
                 onSuccess: () => {},
                 onError: (errors) => {

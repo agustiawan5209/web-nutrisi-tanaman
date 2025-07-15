@@ -23,7 +23,7 @@ export const Toast: React.FC<ToastProps> = ({
             <ToastPrimitive.Root
                 open={open}
                 onOpenChange={onOpenChange}
-                className={`fixed top-4 right-1/2 translate-x-1/2 w-1/3 z-50 rounded-md shadow-lg px-4 py-3 bg-white border ${
+                className={`fixed top-4 right-1/3 translate-x-1/2 w-1/3 z-50 rounded-md shadow-lg px-4 py-3 bg-white border ${
                     variant === "success"
                         ? "bg-green-50 border-green-500"
                         : variant === "error"

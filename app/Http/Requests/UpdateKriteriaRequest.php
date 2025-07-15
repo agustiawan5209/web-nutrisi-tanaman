@@ -22,7 +22,7 @@ class UpdateKriteriaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nama' => 'required|string|max:255|unique:kriterias,nama,' . $this->route('kriteria'),
+            'nama' => 'required|string|max:255|unique:kriterias,nama,'. $this->route('kriteria')->id,
             'deskripsi' => 'nullable|string|max:1000',
         ];
     }
