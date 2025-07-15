@@ -52,3 +52,8 @@ export interface KriteriaTypes{
     nama: string;
     deskripsi: string;
 }
+export interface JenisTanamanTypes{
+    id: number;
+    nama: string;
+    deskripsi: string;
+}

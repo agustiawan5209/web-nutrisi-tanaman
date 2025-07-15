@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
-use App\Models\Kriteria;
+use App\Models\JenisTanaman;
 use Illuminate\Support\Facades\App;
-use App\Http\Requests\StoreKriteriaRequest;
-use App\Http\Requests\UpdateKriteriaRequest;
+use App\Http\Requests\StoreJenisTanamanRequest;
+use App\Http\Requests\UpdateJenisTanamanRequest;
 use Illuminate\Http\Request;
 
-class KriteriaController extends Controller
+class JenisTanamanController extends Controller
 {
     private const BASE_BREADCRUMB = [
         [
@@ -17,8 +17,8 @@ class KriteriaController extends Controller
             'href' => '/dashboard',
         ],
         [
-            'title' => 'kriteria',
-            'href' => '/admin/kriteria/',
+            'title' => 'jenisTanaman',
+            'href' => '/admin/jenisTanaman/',
         ],
     ];
     /**
@@ -26,10 +26,16 @@ class KriteriaController extends Controller
      */
     public function index(Request $request)
     {
-        return Inertia::render("admin/kriteria/index", [
-            'kriteria' => Kriteria::all(),
+        return Inertia::render("admin/jenisTanaman/index", [
+            'jenisTanaman' => JenisTanaman::all(),
             'breadcrumb' => self::BASE_BREADCRUMB,
-            'titlePage'=> 'Kriteria',
+            'titlePage'=> 'JenisTanaman',
+            'can'=> [
+                'add'=> true,
+                'edit'=> true,
+                'show'=> true,
+                'delete'=> true,
+            ]
         ]);
     }
  private function applyFilters($query, Request $request): void
@@ -57,7 +63,7 @@ class KriteriaController extends Controller
      */
     public function create()
     {
-        return Inertia::render('admin/kriteria/create', [
+        return Inertia::render('admin/jenisTanaman/create', [
             'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
                     'title' => 'tambah kategori',
@@ -70,16 +76,16 @@ class KriteriaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreKriteriaRequest $request): \Illuminate\Http\RedirectResponse
+    public function store(StoreJenisTanamanRequest $request): \Illuminate\Http\RedirectResponse
     {
         $databaseHelper = App::make('databaseHelper');
         return $databaseHelper(
-            operation: fn() => Kriteria::create([
+            operation: fn() => JenisTanaman::create([
                 'nama' => $request->nama,
                 'deskripsi' => $request->deskripsi,
             ]),
             successMessage: 'Kategori Berhasil Ditambahkan!',
-            redirectRoute: 'admin.kriteria.index'
+            redirectRoute: 'admin.jenisTanaman.index'
         );
     }
 
@@ -87,61 +93,61 @@ class KriteriaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Kriteria $kriteria)
+    public function show(JenisTanaman $jenisTanaman)
     {
-        return Inertia::render('admin/kriteria/show', [
+        return Inertia::render('admin/jenisTanaman/show', [
             'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
                     'title' => 'detail kategori',
                     'href' => '/admin/kategori/detail',
                 ]
             ]),
-            'kriteria' => $kriteria,
+            'jenisTanaman' => $jenisTanaman,
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Kriteria $kriteria)
+    public function edit(JenisTanaman $jenisTanaman)
     {
-        return Inertia::render('admin/kriteria/edit', [
+        return Inertia::render('admin/jenisTanaman/edit', [
             'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 [
                     'title' => 'edit kategori',
                     'href' => '/admin/kategori/edit',
                 ]
             ]),
-            'kriteria' => $kriteria
+            'jenisTanaman' => $jenisTanaman
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateKriteriaRequest $request, Kriteria $kriteria)
+    public function update(UpdateJenisTanamanRequest $request, JenisTanaman $jenisTanaman)
     {
         $databaseHelper = App::make('databaseHelper');
         return $databaseHelper(
-            operation: fn() => $kriteria->update([
+            operation: fn() => $jenisTanaman->update([
                 'nama'=> $request->nama,
                 'deskripsi'=> $request->deskripsi,
             ]),
             successMessage: 'Kategori Berhasil Di Update!',
-            redirectRoute: 'admin.kriteria.index'
+            redirectRoute: 'admin.jenisTanaman.index'
         );
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Kriteria $kriteria)
+    public function destroy(JenisTanaman $jenisTanaman)
     {
         $databaseHelper = App::make('databaseHelper');
         return $databaseHelper(
-            operation: fn() => $kriteria->delete(),
+            operation: fn() => $jenisTanaman->delete(),
             successMessage: 'Kategori Berhasil Di Hapus!',
-            redirectRoute: 'admin.kriteria.index'
+            redirectRoute: 'admin.jenisTanaman.index'
         );
     }
 }
