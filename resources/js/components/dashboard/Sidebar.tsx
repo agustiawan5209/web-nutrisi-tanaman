@@ -4,7 +4,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { Link, usePage } from '@inertiajs/react';
-import { BarChart2Icon, ChevronLeft, ChevronRight, FileText, HelpCircle, Home, Leaf, LeafyGreen, Settings, Sliders } from 'lucide-react';
+import { BarChart2Icon, ChevronLeft, ChevronRight, Home, Leaf, LeafyGreen } from 'lucide-react';
 import { useState } from 'react';
 import { NavUser } from '../nav-user';
 
@@ -16,7 +16,7 @@ interface SidebarProps {
 
 const Sidebar = ({ className, collapsed = false, onToggleCollapse }: SidebarProps) => {
     const [isCollapsed, setIsCollapsed] = useState(collapsed);
-     const activeSection = usePage().url.split('/').pop() || 'Dashboard';
+    const activeSection = usePage().url.split('/').pop() || 'Dashboard';
     console.log('Active Section:', activeSection);
 
     const handleToggleCollapse = () => {
@@ -31,7 +31,6 @@ const Sidebar = ({ className, collapsed = false, onToggleCollapse }: SidebarProp
         { name: 'Dashboard', icon: <Home size={20} />, href: route('dashboard'), active: 'dashboard' },
         { name: 'Kriteria', icon: <BarChart2Icon size={20} />, href: route('admin.kriteria.index'), active: 'kriterias' },
         { name: 'jenis Tanaman', icon: <LeafyGreen size={20} />, href: route('admin.jenisTanaman.index'), active: 'jenis-tanaman' },
-
     ];
 
     return (

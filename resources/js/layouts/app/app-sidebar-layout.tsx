@@ -8,8 +8,6 @@ import { usePage } from '@inertiajs/react';
 import { useEffect, useState, type PropsWithChildren } from 'react';
 
 export default function AppSidebarLayout({ children, breadcrumbs = [] }: PropsWithChildren<{ breadcrumbs?: BreadcrumbItem[] }>) {
-
-
     const navigationItems = [{ title: 'Dashboard', href: '/dashboard', icon: BarChart3 }];
 
     const page = usePage<SharedData>();
@@ -61,7 +59,7 @@ export default function AppSidebarLayout({ children, breadcrumbs = [] }: PropsWi
             />
 
             {/* Sidebar */}
-            <Sidebar />
+            <Sidebar collapsed={false} />
 
             {/* Main Content */}
             <main className="flex-1 overflow-auto">
