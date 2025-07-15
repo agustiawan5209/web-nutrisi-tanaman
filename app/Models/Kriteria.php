@@ -9,4 +9,9 @@ class Kriteria extends Model
 {
     /** @use HasFactory<\Database\Factories\KriteriaFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'nama',
+        'deskripsi',
+    ];
 }

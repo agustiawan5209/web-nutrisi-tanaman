@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('kriterias', function (Blueprint $table) {
             $table->id();
+            $table->string('nama')->unique();
+            $table->string('deskripsi')->nullable();
             $table->timestamps();
         });
     }

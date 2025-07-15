@@ -1,4 +1,6 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+import AlertNotifications from '@/components/dashboard/AlertNotifications';
+import MetricCards from '@/components/dashboard/MetricCards';
+import NutrientChart from '@/components/dashboard/NutrientChart';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -14,21 +16,41 @@ export default function Dashboard() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+            <div className="mx-auto max-w-7xl">
+                <header className="mb-8">
+                    <h1 className="text-3xl font-semibold text-foreground">Hydroponic Dashboard</h1>
+                    <p className="mt-1 text-muted-foreground">Monitor and maintain optimal growing conditions</p>
+                </header>
+
+                {/* Metric Cards */}
+                <section className="mb-8">
+                    <MetricCards />
+                </section>
+
+                {/* Main Chart */}
+                <section className="mb-8">
+                    <div className="mb-4 flex items-center justify-between">
+                        <h2 className="text-xl font-medium text-foreground">Nutrient Trends</h2>
+                        <div className="flex space-x-2">
+                            <select
+                                className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:ring-1 focus:ring-ring focus:outline-none"
+                                defaultValue="7d"
+                            >
+                                <option value="24h">Last 24 hours</option>
+                                <option value="7d">Last 7 days</option>
+                                <option value="30d">Last 30 days</option>
+                                <option value="90d">Last 90 days</option>
+                            </select>
+                        </div>
                     </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                </div>
-                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                </div>
+                    <NutrientChart />
+                </section>
+
+                {/* Alert Notifications */}
+                <section>
+                    <h2 className="mb-4 text-xl font-medium text-foreground">System Alerts</h2>
+                    <AlertNotifications />
+                </section>
             </div>
         </AppLayout>
     );
