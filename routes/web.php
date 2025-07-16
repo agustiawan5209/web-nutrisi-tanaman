@@ -66,3 +66,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
+
+Route::post('/random-forest/store',[ RandomForestController::class, 'store'])->name('randomForest.store');
+Route::get('/random-forest/get-model',[ RandomForestController::class, 'getModel'])->name('randomForest.getModel');

@@ -1,11 +1,17 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem } from '@/types';
+import { BreadcrumbItem, JenisTanamanTypes, KriteriaTypes } from '@/types';
 import { Head } from '@inertiajs/react';
+import axios from 'axios';
 import { LoaderIcon } from 'lucide-react';
 import { RandomForestClassifier } from 'ml-random-forest';
 import { useEffect, useMemo, useState } from 'react';
+import FormClassifier from './form-classifier';
+
+interface RandomForestClassifierWithEstimators extends RandomForestClassifier {
+    estimators?: any[];
+}
 
 interface IndikatorIndexProps {
     dataTraining: {
@@ -14,6 +20,8 @@ interface IndikatorIndexProps {
     } | null;
     breadcrumb?: BreadcrumbItem[];
     titlePage?: string;
+    kriteria?: KriteriaTypes[];
+    jenisTanaman?: JenisTanamanTypes[];
 }
 
 interface TrainingData {
@@ -22,24 +30,7 @@ interface TrainingData {
     featureNames: string[];
 }
 
-const opsiLabel = [
-    { label: 'Buruk', value: 0 },
-    { label: 'Cukup', value: 1 },
-    { label: 'Baik', value: 2 },
-    { label: 'Sangat Baik', value: 3 },
-];
-const splitDataTraining = (features: number[][], labels: number[], splitRatio = 0.7) => {
-    const shuffledIndices = features.map((_, i) => i).sort(() => Math.random() - 0.5);
-    const splitIndex = Math.floor(features.length * splitRatio);
-
-    const trainFeatures = shuffledIndices.slice(0, splitIndex).map((i) => features[i]);
-    const trainLabels = shuffledIndices.slice(0, splitIndex).map((i) => labels[i]);
-    const testFeatures = shuffledIndices.slice(splitIndex).map((i) => features[i]);
-    const testLabels = shuffledIndices.slice(splitIndex).map((i) => labels[i]);
-
-    return { trainFeatures, trainLabels, testFeatures, testLabels };
-};
-export default function IndikatorIndex({ dataTraining, breadcrumb, titlePage }: IndikatorIndexProps) {
+export default function IndikatorIndex({ dataTraining, breadcrumb, titlePage, kriteria, jenisTanaman }: IndikatorIndexProps) {
     const breadcrumbs: BreadcrumbItem[] = useMemo(
         () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
         [breadcrumb],
@@ -50,7 +41,13 @@ export default function IndikatorIndex({ dataTraining, breadcrumb, titlePage }: 
     const [prediction, setPrediction] = useState<number[] | null>(null);
     const [accuracy, setAccuracy] = useState<number | null>(null);
     const [featureImportance, setFeatureImportance] = useState<{ [key: string]: number } | null>(null);
-    const [splitData, setSplitData] = useState<{trainFeatures: number[][], trainLabels: number[], testFeatures: number[][], testLabels: number[]} | null>(null)
+    const [confusionMatrix, setConfusionMatrix] = useState<number[][] | null>(null);
+    const [splitData, setSplitData] = useState<{
+        trainFeatures: number[][];
+        trainLabels: number[];
+        testFeatures: number[][];
+        testLabels: number[];
+    } | null>(null);
     // Preprocess data
     useEffect(() => {
         if (dataTraining && dataTraining.training && dataTraining.kriteria) {
@@ -73,7 +70,7 @@ export default function IndikatorIndex({ dataTraining, breadcrumb, titlePage }: 
                 featureNames: dataTraining.kriteria.slice(0, -1),
             });
             const { trainFeatures, trainLabels, testFeatures, testLabels } = splitDataTraining(features, labels, 0.8);
-            setSplitData({trainFeatures, trainLabels, testFeatures, testLabels})
+            setSplitData({ trainFeatures, trainLabels, testFeatures, testLabels });
         }
     }, [dataTraining]);
     // Bagi data menjadi training dan test set
@@ -87,7 +84,11 @@ export default function IndikatorIndex({ dataTraining, breadcrumb, titlePage }: 
         setTimeout(() => {
             try {
                 if (trainingData) {
-                    const { trainFeatures, trainLabels, testFeatures, testLabels } = splitDataTraining(trainingData.features, trainingData.labels, 0.8);
+                    const { trainFeatures, trainLabels, testFeatures, testLabels } = splitDataTraining(
+                        trainingData.features,
+                        trainingData.labels,
+                        0.8,
+                    );
                     const options = {
                         seed: 42,
                         maxFeatures: 2,
@@ -110,10 +111,10 @@ export default function IndikatorIndex({ dataTraining, breadcrumb, titlePage }: 
                         }
                     }
                     const acc = (correct / testPredictions.length) * 100;
-
+                    const cfMatrix = classifier.getConfusionMatrix();
                     // Compute feature importance manually (using mean decrease in impurity as a proxy)
                     // This is a simple approximation since ml-random-forest does not provide feature importance directly
-                    const trees = (classifier as any).estimators || [];
+                    const trees = (classifier as RandomForestClassifierWithEstimators).estimators || [];
                     const featureCount = trainingData.featureNames.length;
                     const importances = new Array(featureCount).fill(0);
 
@@ -135,13 +136,11 @@ export default function IndikatorIndex({ dataTraining, breadcrumb, titlePage }: 
                         }
                     });
 
-                    // Normalize importances
-                    const total = importances.reduce((a, b) => a + b, 0) || 1;
-                    const featureImportanceMap: { [key: string]: number } = {};
-                    trainingData.featureNames.forEach((name, index) => {
-                        featureImportanceMap[name] = importances[index] / total;
-                    });
-
+                    // Compute feature importance using a utility function
+                    const featureImportanceMap = computeFeatureImportance(classifier, trainingData.featureNames);
+                    // console.log(featureImportanceMap)
+                    // Save Model
+                    setConfusionMatrix(cfMatrix);
                     setModel(classifier);
                     setPrediction(testPredictions);
                     setAccuracy(acc);
@@ -156,6 +155,21 @@ export default function IndikatorIndex({ dataTraining, breadcrumb, titlePage }: 
         }, 1000);
     };
 
+    const saveModel = async () => {
+        if (model) {
+            try {
+                const response = await axios.post('/random-forest/store', {
+                    model: model.toJSON(),
+                });
+            } catch (error) {
+                console.error('Error saving model:', error);
+            }
+        }
+    };
+    useEffect(() => {
+        saveModel();
+    }, [model]);
+
     const findLabel = (value: number) => {
         return opsiLabel.find((label) => label.value === value)?.label;
     };
@@ -165,12 +179,16 @@ export default function IndikatorIndex({ dataTraining, breadcrumb, titlePage }: 
 
             {/* Data */}
             <Card>
-                <div className="container mx-auto px-4 py-4">
+                <div className="container mx-auto overflow-hidden px-4 py-4">
                     <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <h2 className="text-lg font-bold md:text-xl">Algoritma Random Forest</h2>
                     </div>
-
-                    {/* {dataTraining && (
+                    {kriteria && jenisTanaman && (
+                        <div className="mt-6">
+                            <FormClassifier kriteria={kriteria} jenisTanaman={jenisTanaman} />
+                        </div>
+                    )}
+                    {dataTraining && (
                         <div className="mt-4">
                             <h3 className="text-md mb-2 font-semibold">Data Training</h3>
                             <div className="overflow-x-auto">
@@ -185,7 +203,7 @@ export default function IndikatorIndex({ dataTraining, breadcrumb, titlePage }: 
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {dataTraining.training.map((row, rowIndex) => (
+                                        {dataTraining.training.slice(0, 10).map((row, rowIndex) => (
                                             <tr key={rowIndex}>
                                                 {row.map((cell, cellIndex) => (
                                                     <td key={cellIndex} className="border px-4 py-2">
@@ -198,7 +216,7 @@ export default function IndikatorIndex({ dataTraining, breadcrumb, titlePage }: 
                                 </table>
                             </div>
                         </div>
-                    )} */}
+                    )}
 
                     <form onSubmit={runTrainingModel}>
                         <Button type="submit" variant={'default'}>
@@ -230,30 +248,111 @@ export default function IndikatorIndex({ dataTraining, breadcrumb, titlePage }: 
                     )}
 
                     {prediction && (
-                        <div className="mt-6">
-                            <h3 className="text-md mb-2 font-semibold">Predictions</h3>
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full border bg-white">
-                                    <thead>
-                                        <tr>
-                                            <th className="border px-4 py-2">Actual</th>
-                                            <th className="border px-4 py-2">Predicted</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {splitData?.testLabels?.map((label, index) => (
-                                            <tr key={index}>
-                                                <td className="border px-4 py-2">{findLabel(label)}</td>
-                                                <td className="border px-4 py-2">{findLabel(prediction[index])}</td>
+                        <>
+                            <div className="mt-6">
+                                <h3 className="text-md mb-2 font-semibold">Predictions</h3>
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full border bg-white">
+                                        <thead>
+                                            <tr>
+                                                <th className="border px-4 py-2">Actual</th>
+                                                <th className="border px-4 py-2">Predicted</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {splitData?.testLabels?.map((label, index) => (
+                                                <tr key={index}>
+                                                    <td className="border px-4 py-2">{findLabel(label)}</td>
+                                                    <td className="border px-4 py-2">{findLabel(prediction[index])}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
+                            <div className="mt-6">
+                                <h3 className="text-md mb-2 font-semibold">Confusion Matrix</h3>
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full border bg-white">
+                                        <thead>
+                                            <tr>
+                                                <th className="border px-4 py-2">Predicted \ Actual</th>
+                                                {opsiLabel.map((label) => (
+                                                    <th key={label.value} className="border px-4 py-2">
+                                                        {label.label}
+                                                    </th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {confusionMatrix?.map((row, rowIndex) => (
+                                                <tr key={rowIndex}>
+                                                    <td className="border px-4 py-2">{findLabel(rowIndex)}</td>
+                                                    {row.map((value, colIndex) => (
+                                                        <td key={colIndex} className="border px-4 py-2">
+                                                            {value}
+                                                        </td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </>
                     )}
                 </div>
             </Card>
         </AppLayout>
     );
+}
+
+const opsiLabel = [
+    { label: 'Buruk', value: 0 },
+    { label: 'Cukup', value: 1 },
+    { label: 'Baik', value: 2 },
+    { label: 'Sangat Baik', value: 3 },
+];
+const splitDataTraining = (features: number[][], labels: number[], splitRatio = 0.7) => {
+    const shuffledIndices = features.map((_, i) => i).sort(() => Math.random() - 0.5);
+    const splitIndex = Math.floor(features.length * splitRatio);
+
+    const trainFeatures = shuffledIndices.slice(0, splitIndex).map((i) => features[i]);
+    const trainLabels = shuffledIndices.slice(0, splitIndex).map((i) => labels[i]);
+    const testFeatures = shuffledIndices.slice(splitIndex).map((i) => features[i]);
+    const testLabels = shuffledIndices.slice(splitIndex).map((i) => labels[i]);
+
+    return { trainFeatures, trainLabels, testFeatures, testLabels };
+};
+
+function computeFeatureImportance(classifier: RandomForestClassifier, featureNames: string[]): { [key: string]: number } {
+    const trees = (classifier as any).estimators || [];
+    const featureCount = featureNames.length;
+    const importances = new Array(featureCount).fill(0);
+
+    trees.forEach((tree: any) => {
+        if (tree && tree.featureImportances) {
+            tree.featureImportances.forEach((imp: number, idx: number) => {
+                importances[idx] += imp;
+            });
+        } else if (tree && tree.root && tree.root.splitFeature !== undefined) {
+            // fallback: count splits per feature
+            const countSplits = (node: any, counts: number[]) => {
+                if (node.splitFeature !== undefined && node.splitFeature !== null) {
+                    counts[node.splitFeature]++;
+                    if (node.left) countSplits(node.left, counts);
+                    if (node.right) countSplits(node.right, counts);
+                }
+            };
+            countSplits(tree.root, importances);
+        }
+    });
+
+    // Normalize importances
+    const total = importances.reduce((a, b) => a + b, 0) || 1;
+    const featureImportanceMap: { [key: string]: number } = {};
+    featureNames.forEach((name, index) => {
+        featureImportanceMap[name] = importances[index] / total;
+    });
+    return featureImportanceMap;
 }

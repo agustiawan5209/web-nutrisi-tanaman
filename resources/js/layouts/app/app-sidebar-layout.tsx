@@ -48,7 +48,7 @@ export default function AppSidebarLayout({ children, breadcrumbs = [] }: PropsWi
     };
 
     return (
-        <div className="flex h-screen bg-background">
+        <div className="flex h-screen overflow-hidden bg-background">
             <Toast
                 open={openToast}
                 onOpenChange={setOpenToast}

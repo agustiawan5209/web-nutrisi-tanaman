@@ -66,7 +66,7 @@ export default function HarvestDetailPage({ dataset, breadcrumb, titlePage }: Ha
                             <h3 className="text-sm font-medium text-gray-500">Detail Tanaman</h3>
                             <div className="mt-4 space-y-3">
                                 {data.detail.map((item, index) => (
-                                    <div className="flex justify-between border-b-2">
+                                    <div key={index} className="flex justify-between border-b-2">
                                         <span className="text-base text-gray-800">{item.kriteria.nama}</span>
                                         <span className="text-base font-medium">{item.nilai}</span>
                                     </div>

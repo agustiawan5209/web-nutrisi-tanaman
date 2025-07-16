@@ -23,6 +23,14 @@ type Dataset = {
 };
 
 const opsiLabel = ['Buruk', 'Cukup', 'Baik', 'Sangat Baik'];
+const opsiGejala = [
+    { label: 'daun menguning', value: 0 },
+    { label: 'pertumbuhan lambat', value: 1 },
+    { label: 'ujung daun mengering', value: 2 },
+    { label: 'daun sehat', value: 3 },
+    { label: 'batang rapuh', value: 4 },
+    { label: 'daun menggulung', value: 5 },
+];
 
 interface PropsDatasetView {
     breadcrumb: BreadcrumbItem[];
@@ -42,7 +50,7 @@ export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
         })),
     });
 
-    console.log(data.attribut)
+    console.log(data.attribut);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -61,17 +69,6 @@ export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
             }),
         }));
     };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Tambahkan logika submit di sini
-        post(route('admin.dataset.store'), {
-            onError: (err) => {
-                console.log(err);
-            },
-        });
-    };
-
     const handleSelectChange = (name: string, value: string) => {
         if (name && value !== undefined && data && data.attribut) {
             if (name === 'label' || name === 'jenis_tanaman') {
@@ -82,16 +79,33 @@ export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
             } else {
                 setData((prevData) => ({
                     ...prevData,
-                    attribut: {
-                        ...prevData.attribut,
-                        [name]: value,
-                    },
+                    attribut: prevData.attribut.map((item, index) => {
+                        if (index === Number(name)) {
+                            return {
+                                ...item,
+                                nilai: value,
+                            };
+                        } else {
+                            return item;
+                        }
+                    }),
                 }));
             }
         } else {
             console.error('Invalid data: name, value, or attribut may be undefined');
         }
     };
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        // Tambahkan logika submit di sini
+        post(route('admin.dataset.store'), {
+            onError: (err) => {
+                console.log(err);
+            },
+        });
+    };
+
+
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -137,25 +151,47 @@ export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
 
                     {/* Parameter Lingkungan */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        {kriteria.map((item: any, index: number) => {
-                            return (
+                        {kriteria.map((item: { nama: string; id: number; deskripsi: string }, index: number) => {
+                            if (item.nama.toLowerCase() === 'gejala') {
+                                return (
                                     <div key={index}>
                                         <Label className="text-xs text-gray-600">{item.nama}</Label>
-                                        <Input
-                                            type="text"
-                                            name={`attribut.${index}`}
+                                        <Select
                                             value={data.attribut[index].nilai || ''}
-                                            onChange={handleChange}
-                                            className="input-minimal"
-                                            placeholder={`masukkan ${item.nama}`}
-                                        />
+                                            required
+                                            onValueChange={(value) => handleSelectChange(index.toLocaleString(), value)}
+                                        >
+                                            <SelectTrigger className="input-minimal">
+                                                <SelectValue placeholder="Pilih" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {opsiGejala.map((gejala: any, index) => (
+                                                    <SelectItem key={index} value={gejala.label}>
+                                                        {gejala.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     </div>
+                                );
+                            }
+                            return (
+                                <div key={index}>
+                                    <Label className="text-xs text-gray-600">{item.nama}</Label>
+                                    <Input
+                                        type="text"
+                                        name={`attribut.${index}`}
+                                        value={data.attribut[index].nilai || ''}
+                                        onChange={handleChange}
+                                        className="input-minimal"
+                                        placeholder={`masukkan ${item.nama}`}
+                                    />
+                                </div>
                             );
                         })}
                     </div>
                     <div className="flex justify-end">
                         <Button type="submit" variant={'default'}>
-
                             {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                             Simpan Data
                         </Button>

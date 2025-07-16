@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('random_forests', function (Blueprint $table) {
             $table->id();
-            $table->string('model_path')->comment('Path to the stored Random Forest model');
+            $table->json('model_path')->comment('Path to the stored Random Forest model');
             $table->timestamps();
         });
     }
