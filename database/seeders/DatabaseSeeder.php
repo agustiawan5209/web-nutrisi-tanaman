@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             JenisTanamanSeeder::class,
             KriteriaSeeder::class,
+            DatasetSeeder::class,
         ]);
     }
 }

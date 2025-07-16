@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\DatasetController;
-use App\Http\Controllers\JenisTanamanController;
-use App\Http\Controllers\KriteriaController;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DatasetController;
+use App\Http\Controllers\KriteriaController;
+use App\Http\Controllers\JenisTanamanController;
+use App\Http\Controllers\RandomForestController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -53,6 +54,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::put('/{dataset}', 'update')->name('update');
                 Route::delete('/{dataset}', 'destroy')->name('destroy');
             });
+        });
+    });
+    // Route for random forest model
+    Route::group(['prefix' => 'random-forest', 'as' => 'randomForest.'], function () {
+        Route::controller(RandomForestController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
         });
     });
 });

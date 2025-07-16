@@ -17,7 +17,7 @@ interface SidebarProps {
 const Sidebar = ({ className, collapsed = false, onToggleCollapse }: SidebarProps) => {
     const [isCollapsed, setIsCollapsed] = useState(collapsed);
     const activeSection = usePage().url.split('/').pop() || 'Dashboard';
-    console.log('Active Section:', activeSection);
+    // console.log('Active Section:', activeSection);
 
     const handleToggleCollapse = () => {
         const newCollapsedState = !isCollapsed;
@@ -32,6 +32,7 @@ const Sidebar = ({ className, collapsed = false, onToggleCollapse }: SidebarProp
         { name: 'Kriteria', icon: <BarChart2Icon size={20} />, href: route('admin.kriteria.index'), active: 'kriterias' },
         { name: 'jenis Tanaman', icon: <LeafyGreen size={20} />, href: route('admin.jenisTanaman.index'), active: 'jenis-tanaman' },
         { name: 'Training Tanaman', icon: <FolderClockIcon size={20} />, href: route('admin.dataset.index'), active: 'dataset' },
+        { name: 'Random Forest', icon: <FolderClockIcon size={20} />, href: route('randomForest.index'), active: 'random-forest' },
     ];
 
     return (
