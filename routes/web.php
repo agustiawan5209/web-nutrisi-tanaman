@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DatasetController;
 use App\Http\Controllers\KriteriaController;
 use App\Http\Controllers\JenisTanamanController;
+use App\Http\Controllers\LabelController;
 use App\Http\Controllers\RandomForestController;
 
 Route::get('/', function () {
@@ -19,6 +20,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+
+        // Routes for label
+        Route::group(['prefix' => 'label', 'as' => 'label.'], function () {
+            Route::controller(LabelController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/create', 'create')->name('create');
+                Route::post('/', 'store')->name('store');
+                Route::get('/{label}/edit', 'edit')->name('edit');
+                Route::put('/{label}', 'update')->name('update');
+                Route::delete('/{label}', 'destroy')->name('destroy');
+            });
+        });
 
         // Routes for Kriteria
         Route::group(['prefix' => 'kriterias', 'as' => 'kriteria.'], function () {
