@@ -3,6 +3,7 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DatasetController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\KriteriaController;
 use App\Http\Controllers\JenisTanamanController;
 use App\Http\Controllers\LabelController;
@@ -12,10 +13,8 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+Route::middleware(['auth', 'verified', 'role:admin|super_admin'])->group(function () {
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 
 
@@ -77,8 +76,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
+
+require __DIR__ . '/guest.php';
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 
-Route::post('/random-forest/store',[ RandomForestController::class, 'store'])->name('randomForest.store');
-Route::get('/random-forest/get-model',[ RandomForestController::class, 'getModel'])->name('randomForest.getModel');
+Route::post('/random-forest/store', [RandomForestController::class, 'store'])->name('randomForest.store');
+Route::get('/random-forest/get-model', [RandomForestController::class, 'getModel'])->name('randomForest.getModel');

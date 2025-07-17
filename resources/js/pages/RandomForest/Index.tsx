@@ -8,13 +8,13 @@ import axios from 'axios';
 import { LoaderIcon } from 'lucide-react';
 import { RandomForestClassifier } from 'ml-random-forest';
 import { useEffect, useMemo, useState } from 'react';
-import FormClassifier from './form-classifier';
+import FormClassifier from '@/components/form-classifier';
 
 interface RandomForestClassifierWithEstimators extends RandomForestClassifier {
     estimators?: any[];
 }
 
-interface IndikatorIndexProps {
+interface RandomForestViewProps {
     dataTraining: {
         training: string[][];
         kriteria: string[];
@@ -32,7 +32,7 @@ interface TrainingData {
     featureNames: string[];
 }
 
-export default function IndikatorIndex({ dataTraining, breadcrumb, titlePage, kriteria, jenisTanaman, opsiLabel }: IndikatorIndexProps) {
+export default function RandomForestView({ dataTraining, breadcrumb, titlePage, kriteria, jenisTanaman, opsiLabel }: RandomForestViewProps) {
     const breadcrumbs: BreadcrumbItem[] = useMemo(
         () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
         [breadcrumb],
