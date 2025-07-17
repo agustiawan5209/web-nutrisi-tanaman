@@ -1,462 +1,290 @@
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Leaf,
-  Brain,
-  BarChart3,
-  Users,
-  CheckCircle,
-  ArrowRight,
-  Droplets,
-  Zap,
-  Target,
-} from "lucide-react";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Link } from '@inertiajs/react';
+import { ArrowRight, BarChart3, Brain, CheckCircle, Droplets, Leaf, Target, Zap } from 'lucide-react';
 
 export default function LandingPage() {
-  const features = [
-    {
-      icon: <Brain className="h-8 w-8 text-green-600" />,
-      title: "AI-Powered Analysis",
-      description:
-        "Algoritma Random Forest yang canggih menganalisis data nutrisi untuk memberikan rekomendasi yang akurat dan optimal.",
-    },
-    {
-      icon: <BarChart3 className="h-8 w-8 text-blue-600" />,
-      title: "Real-time Monitoring",
-      description:
-        "Pantau kondisi nutrisi tanaman secara real-time dengan dashboard yang intuitif dan mudah dipahami.",
-    },
-    {
-      icon: <Target className="h-8 w-8 text-purple-600" />,
-      title: "Precision Agriculture",
-      description:
-        "Tingkatkan hasil panen dengan rekomendasi nutrisi yang tepat sasaran berdasarkan data ilmiah.",
-    },
-    {
-      icon: <Zap className="h-8 w-8 text-yellow-600" />,
-      title: "Automated Decisions",
-      description:
-        "Sistem otomatis yang membantu mengambil keputusan nutrisi tanpa perlu keahlian mendalam.",
-    },
-  ];
+    const features = [
+        {
+            icon: <Brain className="h-8 w-8 text-green-600" />,
+            title: 'AI-Powered Analysis',
+            description: 'Algoritma Random Forest yang canggih menganalisis data nutrisi untuk memberikan rekomendasi yang akurat dan optimal.',
+        },
+        {
+            icon: <BarChart3 className="h-8 w-8 text-blue-600" />,
+            title: 'Real-time Monitoring',
+            description: 'Pantau kondisi nutrisi tanaman secara real-time dengan dashboard yang intuitif dan mudah dipahami.',
+        },
+        {
+            icon: <Target className="h-8 w-8 text-purple-600" />,
+            title: 'Precision Agriculture',
+            description: 'Tingkatkan hasil panen dengan rekomendasi nutrisi yang tepat sasaran berdasarkan data ilmiah.',
+        },
+        {
+            icon: <Zap className="h-8 w-8 text-yellow-600" />,
+            title: 'Automated Decisions',
+            description: 'Sistem otomatis yang membantu mengambil keputusan nutrisi tanpa perlu keahlian mendalam.',
+        },
+    ];
 
-  const testimonials = [
-    {
-      name: "Budi Santoso",
-      role: "Petani Hidroponik",
-      content:
-        "Sistem ini sangat membantu saya dalam menentukan nutrisi yang tepat. Hasil panen meningkat 40% sejak menggunakan sistem ini.",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=budi",
-    },
-    {
-      name: "Dr. Sari Wijaya",
-      role: "Ahli Pertanian",
-      content:
-        "Implementasi AI dalam pertanian hidroponik ini sangat inovatif. Algoritma Random Forest memberikan akurasi yang tinggi.",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sari",
-    },
-    {
-      name: "Ahmad Rizki",
-      role: "Startup Agritech",
-      content:
-        "Dashboard yang user-friendly dan rekomendasi yang akurat membuat bisnis hidroponik kami lebih efisien dan profitable.",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=ahmad",
-    },
-  ];
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-green-100 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Leaf className="h-8 w-8 text-green-600" />
-            <span className="text-xl font-bold text-gray-800">HydroAI</span>
-          </div>
-          <nav className="hidden md:flex space-x-6">
-            <a
-              href="#features"
-              className="text-gray-600 hover:text-green-600 transition-colors"
-            >
-              Fitur
-            </a>
-            <a
-              href="#how-it-works"
-              className="text-gray-600 hover:text-green-600 transition-colors"
-            >
-              Cara Kerja
-            </a>
-            <a
-              href="#testimonials"
-              className="text-gray-600 hover:text-green-600 transition-colors"
-            >
-              Testimoni
-            </a>
-          </nav>
-          <Button className="bg-green-600 hover:bg-green-700">Coba Demo</Button>
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto text-center">
-          <Badge className="mb-4 bg-green-100 text-green-800 hover:bg-green-100">
-            🚀 Teknologi AI Terdepan untuk Hidroponik
-          </Badge>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Sistem Pendukung Keputusan untuk
-            <span className="text-green-600 block">
-              Nutrisi Tanaman Hidroponik
-            </span>
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-            Menggunakan Algoritma Random Forest dan Kecerdasan Buatan untuk
-            memberikan rekomendasi nutrisi yang optimal, meningkatkan hasil
-            panen, dan membantu petani hidroponik mencapai efisiensi maksimal.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              className="bg-green-600 hover:bg-green-700 text-lg px-8 py-3"
-            >
-              Mulai Sekarang
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 py-3 border-green-600 text-green-600 hover:bg-green-50"
-            >
-              Lihat Demo
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Importance of Hydroponics Nutrition */}
-      <section className="py-16 px-4 bg-white/50">
-        <div className="container mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                Mengapa Nutrisi Penting dalam Hidroponik?
-              </h2>
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                Dalam sistem hidroponik, tanaman bergantung sepenuhnya pada
-                larutan nutrisi yang diberikan. Keseimbangan nutrisi yang tepat
-                adalah kunci keberhasilan pertumbuhan tanaman yang optimal.
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-600 mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-semibold text-gray-900">
-                      Kontrol Presisi
-                    </h3>
-                    <p className="text-gray-600">
-                      Mengatur komposisi nutrisi dengan akurasi tinggi
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-600 mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-semibold text-gray-900">
-                      Efisiensi Maksimal
-                    </h3>
-                    <p className="text-gray-600">
-                      Mengurangi pemborosan dan meningkatkan hasil panen
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-600 mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-semibold text-gray-900">
-                      Kualitas Terjamin
-                    </h3>
-                    <p className="text-gray-600">
-                      Menghasilkan tanaman dengan kualitas dan nutrisi terbaik
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="bg-gradient-to-br from-green-400 to-blue-500 rounded-2xl p-8 text-white">
-                <Droplets className="h-16 w-16 mb-4 opacity-80" />
-                <h3 className="text-2xl font-bold mb-4">Nutrisi Optimal</h3>
-                <p className="text-green-100">
-                  Sistem kami memastikan setiap tanaman mendapatkan nutrisi yang
-                  tepat pada waktu yang tepat, menghasilkan pertumbuhan yang
-                  sehat dan produktivitas maksimal.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How AI Works */}
-      <section id="how-it-works" className="py-16 px-4">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Bagaimana AI dan Random Forest Bekerja?
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Sistem kami menggunakan algoritma Random Forest yang canggih untuk
-              menganalisis berbagai parameter dan memberikan rekomendasi nutrisi
-              yang akurat berdasarkan data historis dan kondisi real-time.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center border-green-200 hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="mx-auto bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-                  <BarChart3 className="h-8 w-8 text-green-600" />
-                </div>
-                <CardTitle className="text-green-800">
-                  1. Pengumpulan Data
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Sistem mengumpulkan data dari sensor pH, EC, suhu, kelembaban,
-                  dan parameter lingkungan lainnya secara real-time.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center border-blue-200 hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="mx-auto bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-                  <Brain className="h-8 w-8 text-blue-600" />
-                </div>
-                <CardTitle className="text-blue-800">2. Analisis AI</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Algoritma Random Forest menganalisis pola data historis dan
-                  kondisi saat ini untuk memprediksi kebutuhan nutrisi optimal.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center border-purple-200 hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="mx-auto bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-                  <Target className="h-8 w-8 text-purple-600" />
-                </div>
-                <CardTitle className="text-purple-800">
-                  3. Rekomendasi
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Sistem memberikan rekomendasi nutrisi yang spesifik dan
-                  actionable untuk mengoptimalkan pertumbuhan tanaman.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section id="features" className="py-16 px-4 bg-gray-50">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Fitur Unggulan Sistem
-            </h2>
-            <p className="text-xl text-gray-600">
-              Dilengkapi dengan teknologi terdepan untuk memberikan pengalaman
-              terbaik dalam pengelolaan nutrisi hidroponik.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <Card
-                key={index}
-                className="hover:shadow-lg transition-shadow border-0 bg-white"
-              >
-                <CardHeader className="text-center">
-                  <div className="mx-auto mb-4">{feature.icon}</div>
-                  <CardTitle className="text-lg">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 text-center">
-                    {feature.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section id="testimonials" className="py-16 px-4">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Apa Kata Pengguna Kami?
-            </h2>
-            <p className="text-xl text-gray-600">
-              Ribuan petani dan praktisi hidroponik telah merasakan manfaat
-              sistem kami.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center space-x-4">
-                    <img
-                      src={testimonial.avatar}
-                      alt={testimonial.name}
-                      className="w-12 h-12 rounded-full"
-                    />
-                    <div>
-                      <CardTitle className="text-lg">
-                        {testimonial.name}
-                      </CardTitle>
-                      <CardDescription>{testimonial.role}</CardDescription>
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
+            {/* Header */}
+            <header className="sticky top-0 z-50 border-b border-green-100 bg-white/80 backdrop-blur-sm">
+                <div className="container mx-auto flex items-center justify-between px-4 py-4">
+                    <div className="flex items-center space-x-2">
+                        <Leaf className="h-8 w-8 text-green-600" />
+                        <span className="text-xl font-bold text-gray-800">HydroAI</span>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 italic">
-                    &quot;{testimonial.content}&quot;
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+                    <nav className="hidden space-x-6 md:flex">
+                        <a href="#features" className="text-gray-600 transition-colors hover:text-green-600">
+                            Fitur
+                        </a>
+                        <a href="#how-it-works" className="text-gray-600 transition-colors hover:text-green-600">
+                            Cara Kerja
+                        </a>
+                    </nav>
+                    <Link href={route('login')}>
+                        <Button className="bg-green-600 hover:bg-green-700">Masuk</Button>
+                    </Link>
+                </div>
+            </header>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-green-600 to-blue-600">
-        <div className="container mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Siap Meningkatkan Hasil Panen Hidroponik Anda?
-          </h2>
-          <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
-            Bergabunglah dengan ribuan petani yang telah merasakan manfaat
-            teknologi AI dalam pertanian hidroponik. Mulai perjalanan Anda
-            menuju pertanian yang lebih cerdas dan efisien.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              className="bg-white text-green-600 hover:bg-gray-100 text-lg px-8 py-3"
-            >
-              Mulai Uji Coba Gratis
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 py-3 border-white text-white hover:bg-white/10"
-            >
-              Hubungi Tim Kami
-            </Button>
-          </div>
-        </div>
-      </section>
+            {/* Hero Section */}
+            <section className="px-4 py-20">
+                <div className="container mx-auto text-center">
+                    <Badge className="mb-4 bg-green-100 text-green-800 hover:bg-green-100">🚀 Teknologi AI Terdepan untuk Hidroponik</Badge>
+                    <h1 className="mb-6 text-4xl leading-tight font-bold text-gray-900 md:text-6xl">
+                        Sistem Pendukung Keputusan untuk
+                        <span className="block text-green-600">Nutrisi Tanaman Hidroponik</span>
+                    </h1>
+                    <p className="mx-auto mb-8 max-w-3xl text-xl leading-relaxed text-gray-600">
+                        Menggunakan Algoritma Random Forest dan Kecerdasan Buatan untuk memberikan rekomendasi nutrisi yang optimal, meningkatkan
+                        hasil panen, dan membantu petani hidroponik mencapai efisiensi maksimal.
+                    </p>
+                    <div className="flex flex-col justify-center gap-4 sm:flex-row">
+                        <Button size="lg" className="bg-green-600 px-8 py-3 text-lg hover:bg-green-700">
+                            Mulai Sekarang
+                            <ArrowRight className="ml-2 h-5 w-5" />
+                        </Button>
+                        <Button size="lg" variant="outline" className="border-green-600 px-8 py-3 text-lg text-green-600 hover:bg-green-50">
+                            Lihat Demo
+                        </Button>
+                    </div>
+                </div>
+            </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4">
-        <div className="container mx-auto">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <Leaf className="h-8 w-8 text-green-400" />
-                <span className="text-xl font-bold">HydroAI</span>
-              </div>
-              <p className="text-gray-400">
-                Sistem pendukung keputusan berbasis AI untuk nutrisi tanaman
-                hidroponik yang optimal.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Produk</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Dashboard
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Analytics
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Mobile App
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Dukungan</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Dokumentasi
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Tutorial
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Kontak
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Perusahaan</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Tentang Kami
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Karir
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Blog
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 HydroAI. Semua hak dilindungi undang-undang.</p>
-          </div>
+            {/* Importance of Hydroponics Nutrition */}
+            <section className="bg-white/50 px-4 py-16">
+                <div className="container mx-auto">
+                    <div className="grid items-center gap-12 md:grid-cols-2">
+                        <div>
+                            <h2 className="mb-6 text-3xl font-bold text-gray-900">Mengapa Nutrisi Penting dalam Hidroponik?</h2>
+                            <p className="mb-6 leading-relaxed text-gray-600">
+                                Dalam sistem hidroponik, tanaman bergantung sepenuhnya pada larutan nutrisi yang diberikan. Keseimbangan nutrisi yang
+                                tepat adalah kunci keberhasilan pertumbuhan tanaman yang optimal.
+                            </p>
+                            <div className="space-y-4">
+                                <div className="flex items-start space-x-3">
+                                    <CheckCircle className="mt-1 h-6 w-6 flex-shrink-0 text-green-600" />
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900">Kontrol Presisi</h3>
+                                        <p className="text-gray-600">Mengatur komposisi nutrisi dengan akurasi tinggi</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start space-x-3">
+                                    <CheckCircle className="mt-1 h-6 w-6 flex-shrink-0 text-green-600" />
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900">Efisiensi Maksimal</h3>
+                                        <p className="text-gray-600">Mengurangi pemborosan dan meningkatkan hasil panen</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start space-x-3">
+                                    <CheckCircle className="mt-1 h-6 w-6 flex-shrink-0 text-green-600" />
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900">Kualitas Terjamin</h3>
+                                        <p className="text-gray-600">Menghasilkan tanaman dengan kualitas dan nutrisi terbaik</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="relative">
+                            <div className="rounded-2xl bg-gradient-to-br from-green-400 to-blue-500 p-8 text-white">
+                                <Droplets className="mb-4 h-16 w-16 opacity-80" />
+                                <h3 className="mb-4 text-2xl font-bold">Nutrisi Optimal</h3>
+                                <p className="text-green-100">
+                                    Sistem kami memastikan setiap tanaman mendapatkan nutrisi yang tepat pada waktu yang tepat, menghasilkan
+                                    pertumbuhan yang sehat dan produktivitas maksimal.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* How AI Works */}
+            <section id="how-it-works" className="px-4 py-16">
+                <div className="container mx-auto">
+                    <div className="mb-12 text-center">
+                        <h2 className="mb-4 text-3xl font-bold text-gray-900">Bagaimana AI dan Random Forest Bekerja?</h2>
+                        <p className="mx-auto max-w-3xl text-xl text-gray-600">
+                            Sistem kami menggunakan algoritma Random Forest yang canggih untuk menganalisis berbagai parameter dan memberikan
+                            rekomendasi nutrisi yang akurat berdasarkan data historis dan kondisi real-time.
+                        </p>
+                    </div>
+
+                    <div className="grid gap-8 md:grid-cols-3">
+                        <Card className="border-green-200 text-center transition-shadow hover:shadow-lg">
+                            <CardHeader>
+                                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                                    <BarChart3 className="h-8 w-8 text-green-600" />
+                                </div>
+                                <CardTitle className="text-green-800">1. Pengumpulan Data</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-gray-600">
+                                    Sistem mengumpulkan data dari sensor pH, EC, suhu, kelembaban, dan parameter lingkungan lainnya secara real-time.
+                                </p>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="border-blue-200 text-center transition-shadow hover:shadow-lg">
+                            <CardHeader>
+                                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
+                                    <Brain className="h-8 w-8 text-blue-600" />
+                                </div>
+                                <CardTitle className="text-blue-800">2. Analisis AI</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-gray-600">
+                                    Algoritma Random Forest menganalisis pola data historis dan kondisi saat ini untuk memprediksi kebutuhan nutrisi
+                                    optimal.
+                                </p>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="border-purple-200 text-center transition-shadow hover:shadow-lg">
+                            <CardHeader>
+                                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-100">
+                                    <Target className="h-8 w-8 text-purple-600" />
+                                </div>
+                                <CardTitle className="text-purple-800">3. Rekomendasi</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-gray-600">
+                                    Sistem memberikan rekomendasi nutrisi yang spesifik dan actionable untuk mengoptimalkan pertumbuhan tanaman.
+                                </p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+            </section>
+
+            {/* Features */}
+            <section id="features" className="bg-gray-50 px-4 py-16">
+                <div className="container mx-auto">
+                    <div className="mb-12 text-center">
+                        <h2 className="mb-4 text-3xl font-bold text-gray-900">Fitur Unggulan Sistem</h2>
+                        <p className="text-xl text-gray-600">
+                            Dilengkapi dengan teknologi terdepan untuk memberikan pengalaman terbaik dalam pengelolaan nutrisi hidroponik.
+                        </p>
+                    </div>
+
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                        {features.map((feature, index) => (
+                            <Card key={index} className="border-0 bg-white transition-shadow hover:shadow-lg">
+                                <CardHeader className="text-center">
+                                    <div className="mx-auto mb-4">{feature.icon}</div>
+                                    <CardTitle className="text-lg">{feature.title}</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-center text-gray-600">{feature.description}</p>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Footer */}
+            <footer className="bg-gray-900 px-4 py-12 text-white">
+                <div className="container mx-auto">
+                    <div className="grid gap-8 md:grid-cols-4">
+                        <div>
+                            <div className="mb-4 flex items-center space-x-2">
+                                <Leaf className="h-8 w-8 text-green-400" />
+                                <span className="text-xl font-bold">HydroAI</span>
+                            </div>
+                            <p className="text-gray-400">Sistem pendukung keputusan berbasis AI untuk nutrisi tanaman hidroponik yang optimal.</p>
+                        </div>
+                        <div>
+                            <h3 className="mb-4 font-semibold">Produk</h3>
+                            <ul className="space-y-2 text-gray-400">
+                                <li>
+                                    <a href="#" className="transition-colors hover:text-white">
+                                        Dashboard
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" className="transition-colors hover:text-white">
+                                        Analytics
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" className="transition-colors hover:text-white">
+                                        Mobile App
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="mb-4 font-semibold">Dukungan</h3>
+                            <ul className="space-y-2 text-gray-400">
+                                <li>
+                                    <a href="#" className="transition-colors hover:text-white">
+                                        Dokumentasi
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" className="transition-colors hover:text-white">
+                                        Tutorial
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" className="transition-colors hover:text-white">
+                                        Kontak
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="mb-4 font-semibold">Perusahaan</h3>
+                            <ul className="space-y-2 text-gray-400">
+                                <li>
+                                    <a href="#" className="transition-colors hover:text-white">
+                                        Tentang Kami
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" className="transition-colors hover:text-white">
+                                        Karir
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" className="transition-colors hover:text-white">
+                                        Blog
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div className="mt-8 border-t border-gray-800 pt-8 text-center text-gray-400">
+                        <p>&copy; 2024 HydroAI. Semua hak dilindungi undang-undang.</p>
+                    </div>
+                </div>
+            </footer>
         </div>
-      </footer>
-    </div>
-  );
+    );
 }

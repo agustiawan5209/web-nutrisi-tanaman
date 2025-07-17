@@ -15,13 +15,10 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'admin',
-            'email' => 'admin@gmail.com',
-            'password'=> bcrypt('12345678'),
-        ]);
+
 
         $this->call([
+            RoleSeeder::class,
             JenisTanamanSeeder::class,
             KriteriaSeeder::class,
             DatasetSeeder::class,
