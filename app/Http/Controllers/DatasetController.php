@@ -10,6 +10,7 @@ use App\Http\Requests\StoreDatasetRequest;
 use App\Http\Requests\UpdateDatasetRequest;
 use App\Models\DetailDataset;
 use App\Models\JenisTanaman;
+use App\Models\Label;
 
 class DatasetController extends Controller
 {
@@ -44,6 +45,7 @@ class DatasetController extends Controller
         return Inertia::render("admin/dataset/create", [
             'kriteria' => Kriteria::all(),
             'jenisTanaman' => JenisTanaman::all(),
+            "opsiLabel"=> Label::all(),
             'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 ['title' => 'tambah', 'href' => '/admin/dataset/create'],
             ])
@@ -106,6 +108,7 @@ class DatasetController extends Controller
         return Inertia::render('admin/dataset/edit', [
             'dataset' => $dataset,
             'kriteria' => Kriteria::all(),
+            "opsiLabel"=> Label::all(),
             'jenisTanaman' => JenisTanaman::all(),
             'breadrumb' => array_merge(self::BASE_BREADCRUMB, [[
                 "title" => 'edit',

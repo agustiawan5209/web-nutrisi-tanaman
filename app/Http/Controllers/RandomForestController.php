@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
+use App\Models\Label;
 use App\Models\Dataset;
 use App\Models\Kriteria;
 use App\Models\JenisTanaman;
@@ -36,6 +37,7 @@ class RandomForestController extends Controller
             'dataTraining' => $this->getData(),
             "kriteria" => Kriteria::all(),
             "jenisTanaman" => JenisTanaman::all(),
+            "opsiLabel"=> Label::all(),
             'breadcrumb' => self::BASE_BREADCRUMB,
             'titlePage' => 'randomForest',
             'can' => [

@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Toast } from '@/components/ui/toast';
-import { JenisTanamanTypes, KriteriaTypes } from '@/types';
+import { JenisTanamanTypes, KriteriaTypes, LabelTypes } from '@/types';
 import { useForm } from '@inertiajs/react';
 import axios from 'axios';
 import { RandomForestClassifier } from 'ml-random-forest';
@@ -21,12 +21,7 @@ const initialFormData: FormData = {
     feature2: '',
     feature3: '',
 };
-const opsiLabel = [
-    { label: 'Buruk', value: 0 },
-    { label: 'Cukup', value: 1 },
-    { label: 'Baik', value: 2 },
-    { label: 'Sangat Baik', value: 3 },
-];
+
 const opsiGejala = [
     { label: 'daun menguning', value: 0 },
     { label: 'pertumbuhan lambat', value: 1 },
@@ -40,12 +35,35 @@ type Dataset = {
     label: string;
     attribut: string[];
 };
-const findLabel = (value: number) => {
-    return opsiLabel.find((label) => label.value === value)?.label;
-};
-const FormClassifier = ({ kriteria, jenisTanaman }: { kriteria: KriteriaTypes[]; jenisTanaman: JenisTanamanTypes[] }) => {
+
+const FormClassifier = ({
+    kriteria,
+    jenisTanaman,
+    opsiLabel,
+}: {
+    kriteria: KriteriaTypes[];
+    jenisTanaman: JenisTanamanTypes[];
+    opsiLabel: LabelTypes[];
+}) => {
+    const findLabel = (value: number) => {
+        const result = opsiLabel.find((label) => label.id === value);
+        if (result) {
+            return {
+                predict: result.nama,
+                text: result.deskripsi,
+            };
+        } else {
+            return {
+                predict: 'Tidak Ditemukan',
+                text: 'Tidak Ditemukan',
+            };
+        }
+    };
     const [formData, setFormData] = useState<FormData>(initialFormData);
-    const [result, setResult] = useState<string | null>(null);
+    const [result, setResult] = useState<{ predict: string; text: string }>({
+        predict: '',
+        text: '',
+    });
     const [loading, setLoading] = useState(false);
     const [model, setModel] = useState<RandomForestClassifier | null>(null);
     const { data, setData, post, processing, errors } = useForm<Dataset>({
@@ -53,12 +71,12 @@ const FormClassifier = ({ kriteria, jenisTanaman }: { kriteria: KriteriaTypes[];
         label: '',
         attribut: kriteria.map((_, index) => ''),
     });
-    const [toast, setToast] = useState<{title: string; show: boolean; message: string; type: 'success' | 'default' | 'error'}>({
-        title: "",
+    const [toast, setToast] = useState<{ title: string; show: boolean; message: string; type: 'success' | 'default' | 'error' }>({
+        title: '',
         show: false,
         message: '',
         type: 'success',
-    })
+    });
     const getModel = async () => {
         try {
             const response = await axios.get('/random-forest/get-model');
@@ -81,7 +99,7 @@ const FormClassifier = ({ kriteria, jenisTanaman }: { kriteria: KriteriaTypes[];
                 show: true,
                 message: 'Gagal memuat model',
                 type: 'error',
-            })
+            });
             // Tambahkan penanganan error ke user (misal: toast notification)
             throw error; // Re-throw untuk penanganan di komponen pemanggil
         } finally {
@@ -95,7 +113,6 @@ const FormClassifier = ({ kriteria, jenisTanaman }: { kriteria: KriteriaTypes[];
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        setResult(null);
         try {
             const attribut = data.attribut.map((item) => {
                 const found = opsiGejala.find((gejala) => gejala.label === item);
@@ -113,20 +130,27 @@ const FormClassifier = ({ kriteria, jenisTanaman }: { kriteria: KriteriaTypes[];
             };
 
             if (model) {
-                const predict = model.predict([attribut]);
+                const classifier = model.predict([attribut]);
 
-                setResult(`Hasil Prediksi: ${findLabel(predict[0])}`);
+                const { predict, text } = findLabel(classifier[0]);
+                setResult({
+                    predict: predict,
+                    text: text,
+                });
             }
             // const predict = model?.predict();
             // Replace with your API endpoint for classification
         } catch (error) {
-            setResult('Error during classification');
+            setResult({
+                predict: 'Tidak Ditemukan',
+                text: 'Tidak Ditemukan',
+            });
             setToast({
                 title: 'Error',
                 show: true,
                 message: 'Gagal memuat hasil klasifikasi',
                 type: 'error',
-            })
+            });
         } finally {
             setLoading(false);
         }
@@ -172,13 +196,13 @@ const FormClassifier = ({ kriteria, jenisTanaman }: { kriteria: KriteriaTypes[];
     return (
         <div>
             <Toast
-                            open={toast.show}
-                            onOpenChange={()=> setToast((prev) => ({ ...prev, show: false }))}
-                            title={toast.title}
-                            description={toast.message}
-                            duration={5000}
-                            variant={toast.type}
-                        />
+                open={toast.show}
+                onOpenChange={() => setToast((prev) => ({ ...prev, show: false }))}
+                title={toast.title}
+                description={toast.message}
+                duration={5000}
+                variant={toast.type}
+            />
             <h2 className="mb-4 text-2xl font-bold">Random Forest Classification</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -246,21 +270,23 @@ const FormClassifier = ({ kriteria, jenisTanaman }: { kriteria: KriteriaTypes[];
                 </button>
             </form>
             {result && (
-                <div className="mt-4 rounded bg-gray-100 p-3">
-                    <strong>Result:</strong>
-                    <div className="flex items-center">
-                        <div
-                            className={`w-4 h-4 rounded-full mr-2 ${
-                                result === "Buruk"
-                                    ? 'bg-red-500'
-                                    : result === "Cukup"
-                                    ? 'bg-yellow-500'
-                                    : result === "Baik"
-                                    ? 'bg-green-500'
-                                    : 'bg-blue-500'
-                            }`}
-                        />
-                        <span>{result}</span>
+                <div className="mt-4 rounded-lg bg-white p-4 shadow-md">
+                    <div className="flex flex-col justify-center items-start mt-2">
+                        <div className="flex items-center">
+                            <div
+                                className={`mr-3 h-3 w-3 rounded-full ${
+                                    result.predict === 'Buruk'
+                                        ? 'bg-red-400'
+                                        : result.predict === 'Cukup'
+                                          ? 'bg-yellow-400'
+                                          : result.predict === 'Baik'
+                                            ? 'bg-green-400'
+                                            : 'bg-blue-400'
+                                }`}
+                            />
+                            <span className="text-gray-600">Hasil Klasifikasi Nutrisi Tanaman: {result.predict}</span>
+                        </div>
+                        <div className="text-sm text-gray-500 mt-1">{result.text}</div>
                     </div>
                 </div>
             )}

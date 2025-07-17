@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem, JenisTanamanTypes, KriteriaTypes } from '@/types';
+import { BreadcrumbItem, JenisTanamanTypes, KriteriaTypes, LabelTypes } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 
@@ -22,7 +22,6 @@ type Dataset = {
     }[];
 };
 
-const opsiLabel = ['Buruk', 'Cukup', 'Baik', 'Sangat Baik'];
 const opsiGejala = [
     { label: 'daun menguning', value: 0 },
     { label: 'pertumbuhan lambat', value: 1 },
@@ -35,11 +34,12 @@ const opsiGejala = [
 interface PropsDatasetView {
     breadcrumb: BreadcrumbItem[];
     kriteria: KriteriaTypes[];
+    opsiLabel: LabelTypes[];
     jenisTanaman: JenisTanamanTypes[];
     titlePage?: string;
 }
 
-export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, titlePage }: PropsDatasetView) {
+export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, titlePage, opsiLabel }: PropsDatasetView) {
     const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
     const { data, setData, post, processing, errors } = useForm<Dataset>({
         jenis_tanaman: '',
@@ -139,8 +139,8 @@ export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
                                 </SelectTrigger>
                                 <SelectContent>
                                     {opsiLabel.map((item: any, index) => (
-                                        <SelectItem key={index} value={item}>
-                                            {item}
+                                        <SelectItem key={index} value={item.nama}>
+                                            {item.nama}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
