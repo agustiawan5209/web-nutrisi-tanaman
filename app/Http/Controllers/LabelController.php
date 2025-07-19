@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Label;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreLabelRequest;
 use App\Http\Requests\UpdateLabelRequest;
-use Illuminate\Http\Request;
 
 class LabelController extends Controller
 {
@@ -30,6 +31,12 @@ class LabelController extends Controller
             'label' => Label::all(),
             'breadcrumb' => self::BASE_BREADCRUMB,
             'titlePage'=> 'Label',
+            'can'=> [
+                'add'=> Auth::user()->can('add label'),
+                'edit'=> Auth::user()->can('edit label'),
+                'read'=> Auth::user()->can('read label'),
+                'delete'=> Auth::user()->can('delete label'),
+            ],
         ]);
     }
  private function applyFilters($query, Request $request): void

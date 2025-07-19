@@ -1,18 +1,20 @@
-import AlertNotifications from '@/components/dashboard/AlertNotifications';
-import MetricCards from '@/components/dashboard/MetricCards';
-import NutrientChart from '@/components/dashboard/NutrientChart';
+import KPICard from '@/components/dashboard/KPICard';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import { LabelTypes, type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
+interface GuestDashboardProps {
+    meanKriteriaValue: string[];
+    distributionLabel: string[];
+    label: LabelTypes[];
+}
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Dashboard',
+        title: 'GuestDashboard',
         href: '/dashboard',
     },
 ];
-
-export default function Dashboard() {
+export default function Dashboard({ meanKriteriaValue, distributionLabel, label }: GuestDashboardProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -23,33 +25,32 @@ export default function Dashboard() {
                 </header>
 
                 {/* Metric Cards */}
-                <section className="mb-8">
-                    <MetricCards />
-                </section>
-
-                {/* Main Chart */}
-                <section className="mb-8">
-                    <div className="mb-4 flex items-center justify-between">
-                        <h2 className="text-xl font-medium text-foreground">Nutrient Trends</h2>
-                        <div className="flex space-x-2">
-                            <select
-                                className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:ring-1 focus:ring-ring focus:outline-none"
-                                defaultValue="7d"
-                            >
-                                <option value="24h">Last 24 hours</option>
-                                <option value="7d">Last 7 days</option>
-                                <option value="30d">Last 30 days</option>
-                                <option value="90d">Last 90 days</option>
-                            </select>
+                <section className="mb-8 flex gap-3">
+                    <div>
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                            {label.map((item: any, index) => (
+                                <KPICard
+                                    key-={item.id}
+                                    title={`Jumlah Dataset ${item.nama}`}
+                                    value={distributionLabel[item.nama].length}
+                                    unit={'data'}
+                                    status="normal"
+                                    trend="stable"
+                                />
+                            ))}
                         </div>
                     </div>
-                    <NutrientChart />
-                </section>
-
-                {/* Alert Notifications */}
-                <section>
-                    <h2 className="mb-4 text-xl font-medium text-foreground">System Alerts</h2>
-                    <AlertNotifications />
+                    <div className="flex-1/3 space-y-2 rounded bg-gray-50 p-4">
+                        <h4 className="mb-2 font-medium">Rata Rata Kriteria Untuk Nutrisi Sangat Baik</h4>
+                        <ul className="space-y-1">
+                            {meanKriteriaValue &&
+                                Object.entries(meanKriteriaValue).map(([feature, importance], index) => (
+                                    <li key={index} className="text-sm">
+                                        {feature}: {typeof importance === 'string' ? importance : Number(importance).toFixed(4)}
+                                    </li>
+                                ))}
+                        </ul>
+                    </div>
                 </section>
             </div>
         </AppLayout>

@@ -29,7 +29,7 @@ export default function LandingPage() {
     ];
 
     return (
-        <MainLayout title="HydroAI - Sistem Pendukung Keputusan untuk Nutrisi Tanaman Hidroponik">
+        <MainLayout >
             {/* Hero Section */}
             <section className="px-4 py-20">
                 <div className="container mx-auto text-center">

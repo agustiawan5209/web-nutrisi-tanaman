@@ -15,6 +15,12 @@ interface JenisTanamanIndexProps {
     jenisTanaman: JenisTanamanTypes[];
     breadcrumb?: BreadcrumbItem[];
     titlePage?: string;
+    can?: {
+        add: boolean;
+        edit: boolean;
+        read: boolean;
+        delete: boolean;
+    };
 }
 type jenisTanamanFormData = {
     id: number | null;
@@ -22,7 +28,7 @@ type jenisTanamanFormData = {
     deskripsi: string;
 };
 
-export default function JenisTanamanIndex({ jenisTanaman, breadcrumb, titlePage }: JenisTanamanIndexProps) {
+export default function JenisTanamanIndex({ jenisTanaman, breadcrumb, titlePage,can }: JenisTanamanIndexProps) {
     const breadcrumbs: BreadcrumbItem[] = useMemo(
         () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
         [breadcrumb],
@@ -102,9 +108,11 @@ export default function JenisTanamanIndex({ jenisTanaman, breadcrumb, titlePage 
                     <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <h2 className="text-lg font-bold md:text-xl">Jenis Tanaman</h2>
                         <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
-                            <Button variant={'default'} type="button" className="cursor-pointer" onClick={() => setIsOpenDialog(true)}>
-                                Tambah Data
-                            </Button>
+                          {can?.add && (
+                                <Button variant={'default'} type="button" className="cursor-pointer" onClick={() => setIsOpenDialog(true)}>
+                                    Tambah Data
+                                </Button>
+                            )}
                         </div>
                     </div>
                     <div className="overflow-x-auto rounded-sm border">
@@ -114,7 +122,7 @@ export default function JenisTanamanIndex({ jenisTanaman, breadcrumb, titlePage 
                                     <TableHead className="cursor-pointer">no</TableHead>
                                     <TableHead className="cursor-pointer">Nama</TableHead>
                                     <TableHead className="cursor-pointer">deskripsi</TableHead>
-                                    <TableHead className="cursor-pointer">Aksi</TableHead>
+                                    {(can?.delete || can?.edit) && <TableHead className="cursor-pointer">Aksi</TableHead>}
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -124,28 +132,33 @@ export default function JenisTanamanIndex({ jenisTanaman, breadcrumb, titlePage 
                                             <TableCell>{index + 1}</TableCell>
                                             <TableCell>{item.nama}</TableCell>
                                             <TableCell>{item.deskripsi}</TableCell>
-                                            <TableCell>
-                                                <div className="flex flex-row items-center gap-2">
-                                                    <Button
-                                                        type="button"
-                                                        variant={'default'}
-                                                        tooltip="edit"
-                                                        onClick={() => handleEdit(item.id)}
-                                                        className="border border-chart-4 bg-chart-4"
-                                                    >
-                                                        {' '}
-                                                        <PenBox />{' '}
-                                                    </Button>
+                                                   {(can?.edit || can?.delete) && (
+                                                <TableCell>
+                                                    <div className="flex flex-row items-center gap-2">
+                                                        {can?.edit && (
+                                                            <Button
+                                                                type="button"
+                                                                variant={'default'}
+                                                                tooltip="edit"
+                                                                onClick={() => handleEdit(item.id)}
+                                                                className="border border-chart-4 bg-chart-4"
+                                                            >
+                                                                {' '}
+                                                                <PenBox />{' '}
+                                                            </Button>
+                                                        )}
 
-                                                    <DeleteConfirmationForm
-                                                        title={`Hapus jenisTanaman ${item.id}`}
-                                                        id={item.id}
-                                                        url={route('admin.jenisTanaman.destroy', { jenisTanaman: item.id })}
-                                                        param={{ jenisTanaman: item.id }}
-                                                        setOpenDialog={setisDeleteDialog}
-                                                    />
-                                                </div>
-                                            </TableCell>
+                                                        {can?.delete && (
+                                                            <DeleteConfirmationForm
+                                                                title={`Hapus label ${item.id}`}
+                                                                id={item.id}
+                                                                url={route('admin.label.destroy', { label: item.id })}
+                                                                setOpenDialog={setisDeleteDialog}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                </TableCell>
+                                            )}
                                         </TableRow>
                                     ))
                                 ) : (

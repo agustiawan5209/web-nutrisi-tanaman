@@ -48,7 +48,7 @@ export default function IndikatorIndex({ dataset, breadcrumb, titlePage }: Indik
             <Card>
                 <div className="container mx-auto px-4">
                     <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <h2 className="text-lg font-bold md:text-xl">Data Panen Rumput Laut</h2>
+                        <h2 className="text-lg font-bold md:text-xl">Data Nutrisi Tanaman</h2>
                         <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
                             <Link href={route('admin.dataset.create')}>
                                 <Button variant={'default'} type="button" className="cursor-pointer">

@@ -29,7 +29,14 @@ class RoleSeeder extends Seeder
         $admin = Role::create(['name' => 'admin']);
         $user = Role::create(['name' => 'user']);
 
-
+        Permission::create(['name' => 'add label']);
+        Permission::create(['name' => 'edit label']);
+        Permission::create(['name' => 'read label']);
+        Permission::create(['name' => 'delete label']);
+        Permission::create(['name' => 'add jenis_tanaman']);
+        Permission::create(['name' => 'edit jenis_tanaman']);
+        Permission::create(['name' => 'read jenis_tanaman']);
+        Permission::create(['name' => 'delete jenis_tanaman']);
         $permission_admin = [
             ['name' => 'add kriteria'],
             ['name' => 'edit kriteria'],
@@ -40,12 +47,6 @@ class RoleSeeder extends Seeder
             ['name' => 'edit dataset'],
             ['name' => 'read dataset'],
             ['name' => 'delete dataset'],
-
-            ['name' => 'add label'],
-            ['name' => 'edit label'],
-            ['name' => 'read label'],
-            ['name' => 'delete label'],
-
 
             ['name' => 'add classify'],
             ['name' => 'edit classify'],
@@ -58,6 +59,9 @@ class RoleSeeder extends Seeder
             $prms = Permission::create($value);
             $admin->givePermissionTo($prms);
         }
+        $admin->givePermissionTo(['name'=> 'read label']);
+        $admin->givePermissionTo(['name'=> 'edit label']);
+        $admin->givePermissionTo(['name'=> 'edit jenis_tanaman']);
 
         $permission_user = [
             ['name' => 'read dataset'],

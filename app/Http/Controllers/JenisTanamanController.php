@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\JenisTanaman;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreJenisTanamanRequest;
 use App\Http\Requests\UpdateJenisTanamanRequest;
-use Illuminate\Http\Request;
 
 class JenisTanamanController extends Controller
 {
@@ -31,11 +32,11 @@ class JenisTanamanController extends Controller
             'breadcrumb' => self::BASE_BREADCRUMB,
             'titlePage'=> 'JenisTanaman',
             'can'=> [
-                'add'=> true,
-                'edit'=> true,
-                'show'=> true,
-                'delete'=> true,
-            ]
+                'add'=> Auth::user()->can('add jenis_tanaman'),
+                'edit'=> Auth::user()->can('edit jenis_tanaman'),
+                'read'=> Auth::user()->can('read jenis_tanaman'),
+                'delete'=> Auth::user()->can('delete jenis_tanaman'),
+            ],
         ]);
     }
  private function applyFilters($query, Request $request): void
