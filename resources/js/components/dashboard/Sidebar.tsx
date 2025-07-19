@@ -4,7 +4,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { Link, usePage } from '@inertiajs/react';
-import { BarChart2Icon, ChevronLeft, ChevronRight, FolderClockIcon, Home, Leaf, LeafyGreen } from 'lucide-react';
+import { BarChart2Icon, ChevronLeft, ChevronRight, FolderClockIcon, GalleryHorizontal, Home, Leaf, LeafyGreen } from 'lucide-react';
 import { useState } from 'react';
 import { NavUser } from '../nav-user';
 
@@ -33,7 +33,8 @@ const Sidebar = ({ className, collapsed = false, onToggleCollapse }: SidebarProp
         { name: 'Label', icon: <BarChart2Icon size={20} />, href: route('admin.label.index'), active: 'label' },
         { name: 'jenis Tanaman', icon: <LeafyGreen size={20} />, href: route('admin.jenisTanaman.index'), active: 'jenis-tanaman' },
         { name: 'Training Tanaman', icon: <FolderClockIcon size={20} />, href: route('admin.dataset.index'), active: 'dataset' },
-        { name: 'Random Forest', icon: <FolderClockIcon size={20} />, href: route('randomForest.index'), active: 'random-forest' },
+        { name: 'Random Forest', icon: <GalleryHorizontal size={20} />, href: route('randomForest.index'), active: 'random-forest' },
+        { name: 'Riwayat Klasifikasi', icon: <FolderClockIcon size={20} />, href: route('admin.riwayat.index'), active: 'riwayat-forest' },
     ];
 
     return (

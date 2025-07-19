@@ -30,8 +30,10 @@ class RiwayatKlasifikasiController extends Controller
     public function index()
     {
           // Handle the request to display the Random Forest model index page
+          $data = RiwayatKlasifikasi::orderBy('created_at', 'desc')->paginate(10);
+        //   dd($data);
         return Inertia::render('admin/riwayat/index', [
-            'data' => RiwayatKlasifikasi::all(),
+            'riwayat' => $data,
             "kriteria" => Kriteria::all(),
             "jenisTanaman" => JenisTanaman::all(),
             "opsiLabel"=> Label::all(),
@@ -59,7 +61,13 @@ class RiwayatKlasifikasiController extends Controller
      */
     public function store(StoreRiwayatKlasifikasiRequest $request)
     {
-        $klasifikasi = RiwayatKlasifikasi::create($request->all());
+        $klasifikasi = RiwayatKlasifikasi::create([
+            'user'=> json_encode($request->user),
+            'label' => $request->label,
+            'jenis_tanaman' => $request->jenis_tanaman,
+            'attribut'=> json_encode($request->attribut),
+            'kriteria'=> json_encode($request->kriteria),
+        ]);
         return response()->json([
             "success" => true,
             "data" => $klasifikasi,
@@ -69,10 +77,10 @@ class RiwayatKlasifikasiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(RiwayatKlasifikasi $riwayatKlasifikasi)
+    public function show(RiwayatKlasifikasi $riwayat)
     {
          return Inertia::render('admin/riwayat/show', [
-            'data' => RiwayatKlasifikasi::all(),
+            'riwayat' => $riwayat,
             "kriteria" => Kriteria::all(),
             "jenisTanaman" => JenisTanaman::all(),
             "opsiLabel"=> Label::all(),

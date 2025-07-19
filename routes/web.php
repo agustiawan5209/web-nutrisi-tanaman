@@ -8,6 +8,7 @@ use App\Http\Controllers\KriteriaController;
 use App\Http\Controllers\JenisTanamanController;
 use App\Http\Controllers\LabelController;
 use App\Http\Controllers\RandomForestController;
+use App\Http\Controllers\RiwayatKlasifikasiController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -65,6 +66,12 @@ Route::middleware(['auth', 'verified', 'role:admin|super_admin'])->group(functio
                 Route::get('/{dataset}/show', 'show')->name('show');
                 Route::put('/{dataset}', 'update')->name('update');
                 Route::delete('/{dataset}', 'destroy')->name('destroy');
+            });
+        });
+        Route::group(['prefix' => 'riwayat', 'as' => 'riwayat.'], function () {
+            Route::controller(RiwayatKlasifikasiController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/{riwayat}/show', 'show')->name('show');
             });
         });
     });

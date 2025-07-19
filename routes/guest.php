@@ -16,8 +16,8 @@ Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
             });
         });
     });
-    Route::post('riwayat-klasifikasi/store-data', [RiwayatKlasifikasiController::class, 'store'])->name('riwayat-klasifikasi.store');
 });
 
+Route::post('riwayat-klasifikasi/store-data', [RiwayatKlasifikasiController::class, 'store'])->name('riwayat-klasifikasi.store');
 
 // Route for random forest model

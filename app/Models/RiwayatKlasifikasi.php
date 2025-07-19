@@ -11,12 +11,16 @@ class RiwayatKlasifikasi extends Model
     use HasFactory;
 
     protected $fillable = [
+        "user",
         "label",
         "jenis_tanaman",
         "attribut",
+        "kriteria",
     ];
 
     protected $casts = [
         'attribut' => 'json',
+        'kriteria' => 'json',
+        'user' => 'json',
     ];
 }

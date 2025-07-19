@@ -22,9 +22,11 @@ class StoreRiwayatKlasifikasiRequest extends FormRequest
     public function rules(): array
     {
         return [
+            "user"=> "required",
             "label"=> "required|string|max:50",
             "jenis_tanaman"=> "required|string|exists:jenis_tanamen,nama",
             "attribut"=> "required",
+            "kriteria"=> "required",
         ];
     }
 }

@@ -3,8 +3,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Toast } from '@/components/ui/toast';
-import { JenisTanamanTypes, KriteriaTypes, LabelTypes } from '@/types';
-import { useForm } from '@inertiajs/react';
+import { JenisTanamanTypes, KriteriaTypes, LabelTypes, SharedData } from '@/types';
+import { useForm, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { RandomForestClassifier } from 'ml-random-forest';
 import React, { useEffect, useState } from 'react';
@@ -45,6 +45,8 @@ const FormClassifier = ({
     jenisTanaman: JenisTanamanTypes[];
     opsiLabel: LabelTypes[];
 }) => {
+    const page = usePage<SharedData>().props;
+    const { auth } = page;
     const findLabel = (value: number) => {
         const result = opsiLabel.find((label) => label.id === value);
         if (result) {
@@ -126,7 +128,6 @@ const FormClassifier = ({
         }));
     };
 
-
     const handleSelectChange = (name: string, value: string) => {
         if (name && value !== undefined && data && data.attribut) {
             if (name === 'label' || name === 'jenis_tanaman') {
@@ -151,61 +152,60 @@ const FormClassifier = ({
         }
     };
 
-
-     const storeData = async ()=>{
-      post(route('riwayat-klasifikasi.store'))
-    }
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        const timer = setInterval(() => {
-            setLoading(false);
+        setResult({ predict: '', text: '' });
+        try {
+            const attribut = data.attribut.map((item) => {
+                const found = opsiGejala.find((gejala) => gejala.label === item);
+                return found ? found.value : Number(item);
+            });
+            const tanaman = jenisTanaman.find((item) => item.nama === data.jenis_tanaman);
+            attribut.push(tanaman?.id || 0);
+            const options = {
+                seed: 42,
+                maxFeatures: 2,
+                replacement: true,
+                nEstimators: 100,
+                // maxDepth: 5, // Tambahkan pembatasan kedalaman
+                useSampleBagging: true,
+            };
 
-            try {
-                const attribut = data.attribut.map((item) => {
-                    const found = opsiGejala.find((gejala) => gejala.label === item);
-                    return found ? found.value : Number(item);
+            if (model) {
+                const classifier = model.predict([attribut]);
+
+                const { predict, text } = findLabel(classifier[0]);
+                setResult({
+                    predict: predict,
+                    text: text,
                 });
-                const tanaman = jenisTanaman.find((item) => item.nama === data.jenis_tanaman);
-                attribut.push(tanaman?.id || 0);
-                const options = {
-                    seed: 42,
-                    maxFeatures: 2,
-                    replacement: true,
-                    nEstimators: 100,
-                    // maxDepth: 5, // Tambahkan pembatasan kedalaman
-                    useSampleBagging: true,
-                };
-
-                if (model) {
-                    const classifier = model.predict([attribut]);
-
-                    const { predict, text } = findLabel(classifier[0]);
-                    setResult({
-                        predict: predict,
-                        text: text,
+                if (auth.role !== 'admin') {
+                    const response = await axios.post(route('riwayat-klasifikasi.store'), {
+                        user: auth.user,
+                        jenis_tanaman: data.jenis_tanaman,
+                        label: predict,
+                        attribut: data.attribut,
+                        kriteria: kriteria.map((item) => item.nama),
                     });
                 }
-                // const predict = model?.predict();
-                storeData()
-                // Replace with your API endpoint for classification
-            } catch (error) {
-                setResult({
-                    predict: 'Tidak Ditemukan',
-                    text: 'Tidak Ditemukan',
-                });
-                setToast({
-                    title: 'Error',
-                    show: true,
-                    message: 'Gagal memuat hasil klasifikasi',
-                    type: 'error',
-                });
-            } finally {
-                setLoading(false);
             }
-        }, 3000);
-
-        return clearTimeout(timer);
+            // const predict = model?.predict();
+            // Replace with your API endpoint for classification
+        } catch (error) {
+            setResult({
+                predict: 'Tidak Ditemukan',
+                text: 'Tidak Ditemukan',
+            });
+            setToast({
+                title: 'Error',
+                show: true,
+                message: 'Gagal memuat hasil klasifikasi',
+                type: 'error',
+            });
+        } finally {
+            setLoading(false);
+        }
     };
     return (
         <div>
@@ -279,7 +279,7 @@ const FormClassifier = ({
                     })}
                 </div>
                 {/* Add more feature inputs as needed */}
-                <button type="submit" className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" disabled={loading}>
+                <button type="submit" className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:bg-blue-300" disabled={loading}>
                     {loading ? 'running...' : 'Mulai Klasifikasi'}
                 </button>
             </form>
