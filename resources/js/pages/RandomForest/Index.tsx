@@ -322,7 +322,7 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
                                             {splitData?.testLabels?.map((label, index) => (
                                                 <tr key={index}>
                                                     <td className="border px-4 py-2">{findLabel(label)}</td>
-                                                    <td className="border px-4 py-2">{findLabel(prediction[index])}</td>
+                                                    <td className="border px-4 py-2">{findLabel(prediction[label])}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -346,7 +346,7 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
                                         <tbody>
                                             {confusionMatrix?.map((row, rowIndex) => (
                                                 <tr key={rowIndex}>
-                                                    <td className="border px-4 py-2">{findLabel(rowIndex)}</td>
+                                                    <td className="border px-4 py-2">{findLabel(rowIndex +1)}</td>
                                                     {row.map((value, colIndex) => (
                                                         <td key={colIndex} className="border px-4 py-2">
                                                             {value}
