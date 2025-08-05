@@ -14,7 +14,7 @@ class DatasetSeeder extends Seeder
      */
     public function run(): void
     {
-        $jenis_tanaman = ["Kangkung", "Selada", "Seledri", "Bayam", "Pakcoy"];
+        $jenis_tanaman = ["Selada", "Seledri", "Bayam", "Pakcoy"];
         $label = ["Buruk", "Cukup", "Baik", "Sangat Baik"];
         $gejala = [
             "Buruk" => ["daun menguning", "pertumbuhan lambat", "ujung daun mengering", "batang rapuh"],

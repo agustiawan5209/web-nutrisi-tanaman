@@ -173,7 +173,7 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
     }, [model]);
 
     const findLabel = (value: number) => {
-        return opsiLabel.find((label) => label.id === value)?.id;
+        return opsiLabel.find((label) => label.id === value)?.nama;
     };
 
     //  history tabel
