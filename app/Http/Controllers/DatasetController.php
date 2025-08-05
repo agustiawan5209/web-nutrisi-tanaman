@@ -29,7 +29,7 @@ class DatasetController extends Controller
      */
     public function index()
     {
-        $datasets = Dataset::paginate(10);
+        $datasets = Dataset::orderBy('id', 'desc')->paginate(10);
 
         return Inertia::render("admin/dataset/index", [
             "dataset" => $datasets,

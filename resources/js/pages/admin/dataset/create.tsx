@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -105,8 +106,6 @@ export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
         });
     };
 
-
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={titlePage ?? 'Input Data Panen Rumput Laut'} />
@@ -168,6 +167,31 @@ export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
                                                 {opsiGejala.map((gejala: any, index) => (
                                                     <SelectItem key={index} value={gejala.label}>
                                                         {gejala.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                );
+                            }
+                            if (item.nama.toLowerCase().includes('ph')) {
+                                return (
+                                    <div key={index}>
+                                        <Label htmlFor={`attribut.${index}`} className="text-xs text-gray-600">
+                                            {item.nama}
+                                        </Label>
+                                        <Select
+                                            value={data.attribut[index].nilai || ''}
+                                            required
+                                            onValueChange={(value) => handleSelectChange(index.toLocaleString(), value)}
+                                        >
+                                            <SelectTrigger className="input-minimal">
+                                                <SelectValue placeholder="Pilih" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {['0', '1', '2', '3', '4', '5', '6', '7', '8'].map((gejala: any, index) => (
+                                                    <SelectItem key={index} value={gejala}>
+                                                        {gejala}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>

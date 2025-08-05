@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import InputError from '@/components/input-error';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,18 +10,6 @@ import axios from 'axios';
 import { RandomForestClassifier } from 'ml-random-forest';
 import React, { useEffect, useState } from 'react';
 
-interface FormData {
-    feature1: string;
-    feature2: string;
-    feature3: string;
-    // Add more features as needed
-}
-
-const initialFormData: FormData = {
-    feature1: '',
-    feature2: '',
-    feature3: '',
-};
 
 const opsiGejala = [
     { label: 'daun menguning', value: 0 },
@@ -61,17 +50,16 @@ const FormClassifier = ({
             };
         }
     };
-    const [formData, setFormData] = useState<FormData>(initialFormData);
     const [result, setResult] = useState<{ predict: string; text: string }>({
         predict: '',
         text: '',
     });
     const [loading, setLoading] = useState(false);
     const [model, setModel] = useState<RandomForestClassifier | null>(null);
-    const { data, setData, post, processing, errors } = useForm<Dataset>({
+    const { data, setData, errors } = useForm<Dataset>({
         jenis_tanaman: '',
         label: '',
-        attribut: kriteria.map((_, index) => ''),
+        attribut: kriteria.map(() => ''),
     });
     const [toast, setToast] = useState<{ title: string; show: boolean; message: string; type: 'success' | 'default' | 'error' }>({
         title: '',
@@ -163,14 +151,7 @@ const FormClassifier = ({
             });
             const tanaman = jenisTanaman.find((item) => item.nama === data.jenis_tanaman);
             attribut.push(tanaman?.id || 0);
-            const options = {
-                seed: 42,
-                maxFeatures: 2,
-                replacement: true,
-                nEstimators: 100,
-                // maxDepth: 5, // Tambahkan pembatasan kedalaman
-                useSampleBagging: true,
-            };
+
 
             if (model) {
                 const classifier = model.predict([attribut]);
@@ -181,7 +162,7 @@ const FormClassifier = ({
                     text: text,
                 });
                 if (auth.role !== 'admin') {
-                    const response = await axios.post(route('riwayat-klasifikasi.store'), {
+                     await axios.post(route('riwayat-klasifikasi.store'), {
                         user: auth.user,
                         jenis_tanaman: data.jenis_tanaman,
                         label: predict,
@@ -193,6 +174,7 @@ const FormClassifier = ({
             // const predict = model?.predict();
             // Replace with your API endpoint for classification
         } catch (error) {
+            console.log(error)
             setResult({
                 predict: 'Tidak Ditemukan',
                 text: 'Tidak Ditemukan',
@@ -255,6 +237,31 @@ const FormClassifier = ({
                                             {opsiGejala.map((gejala: any, index) => (
                                                 <SelectItem key={index} value={gejala.label}>
                                                     {gejala.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            );
+                        }
+                        if (item.nama.toLowerCase().includes('ph')) {
+                            return (
+                                <div key={index}>
+                                    <Label htmlFor={`attribut.${index}`} className="text-xs text-gray-600">
+                                        {item.nama}
+                                    </Label>
+                                    <Select
+                                        value={data.attribut[index] || ''}
+                                        required
+                                        onValueChange={(value) => handleSelectChange(index.toLocaleString(), value)}
+                                    >
+                                        <SelectTrigger className="input-minimal">
+                                            <SelectValue placeholder="Pilih" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {['0', '1', '2', '3', '4', '5', '6', '7', '8'].map((gejala: any, index) => (
+                                                <SelectItem key={index} value={gejala}>
+                                                    {gejala}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
