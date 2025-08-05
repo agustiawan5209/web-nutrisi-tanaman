@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
@@ -79,6 +81,10 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
 
     // Train model when data is ready
     const [loading, setLoading] = useState(false);
+    const [resultPrediction, setResultPrediction] = useState<{actual: number, predicted: number}[]>([{
+        actual: 0,
+        predicted: 0
+    }])
     const runTrainingModel = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -86,11 +92,12 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
         setTimeout(() => {
             try {
                 if (trainingData) {
-                    const { trainFeatures, trainLabels, testFeatures, testLabels } = splitDataTraining(
-                        trainingData.features,
-                        trainingData.labels,
-                        0.8,
-                    );
+                    const { trainFeatures, trainLabels, testFeatures, testLabels } = {
+                        trainFeatures: splitData?.trainFeatures ?? [],
+                        trainLabels: splitData?.trainLabels ?? [],
+                        testFeatures: splitData?.testFeatures ?? [],
+                        testLabels: splitData?.testLabels ?? [],
+                    }
                     const options = {
                         seed: 42,
                         maxFeatures: 2,
@@ -108,6 +115,7 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
 
                     let correct = 0;
                     for (let i = 0; i < testPredictions.length; i++) {
+                        setResultPrediction(resultPrediction => [...resultPrediction, {actual: testLabels[i], predicted: testPredictions[i]}])
                         if (testPredictions[i] === testLabels[i]) {
                             correct++;
                         }
@@ -160,7 +168,7 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
     const saveModel = async () => {
         if (model) {
             try {
-                const response = await axios.post('/random-forest/store', {
+                await axios.post('/random-forest/store', {
                     model: model.toJSON(),
                 });
             } catch (error) {
@@ -319,12 +327,15 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {splitData?.testLabels?.map((label, index) => (
+                                            {resultPrediction.map((label, index) => {
+                                                console.log(label)
+                                                return (
                                                 <tr key={index}>
-                                                    <td className="border px-4 py-2">{findLabel(label)}</td>
-                                                    <td className="border px-4 py-2">{findLabel(prediction[label])}</td>
+                                                    <td className="border px-4 py-2">{findLabel(label.actual)}</td>
+                                                    <td className="border px-4 py-2">{findLabel(label.predicted)}</td>
                                                 </tr>
-                                            ))}
+                                            )
+                                            })}
                                         </tbody>
                                     </table>
                                 </div>
