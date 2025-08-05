@@ -152,7 +152,7 @@ export default function JenisTanamanIndex({ jenisTanaman, breadcrumb, titlePage,
                                                             <DeleteConfirmationForm
                                                                 title={`Hapus label ${item.id}`}
                                                                 id={item.id}
-                                                                url={route('admin.jenisTanaman.destroy', { label: item.id })}
+                                                                url={route('admin.jenisTanaman.destroy', { jenisTanaman: item.id })}
                                                                 setOpenDialog={setisDeleteDialog}
                                                             />
                                                         )}
