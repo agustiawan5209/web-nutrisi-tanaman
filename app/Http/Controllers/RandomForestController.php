@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Label;
 use App\Models\Dataset;
+use App\Models\Gejala;
 use App\Models\Kriteria;
 use App\Models\JenisTanaman;
 use App\Models\RandomForest;
@@ -38,6 +39,7 @@ class RandomForestController extends Controller
             "kriteria" => Kriteria::all(),
             "jenisTanaman" => JenisTanaman::all(),
             "opsiLabel"=> Label::all(),
+            "opsiGejala"=> Gejala::orderBy('id', 'desc')->get(),
             'breadcrumb' => self::BASE_BREADCRUMB,
             'titlePage' => 'randomForest',
             'can' => [
@@ -49,19 +51,23 @@ class RandomForestController extends Controller
         ]);
     }
 
-    private function getData()
+    public function getData()
     {
         // Logic to retrieve data for the Random Forest model
 
         $data = [];
         $dataset = Dataset::with(['detail', 'detail.kriteria'])->orderBy('id', 'desc')->get();
         $kriteria = Kriteria::select('nama')->orderBy('id', 'asc')->get()->pluck('nama')->toArray();
-        $gejala = ["daun menguning" => 1, "pertumbuhan lambat" => 2, "ujung daun mengering" => 3, "daun sehat" => 4, "batang rapuh" => 5, "daun menggulung" => 6];
         foreach ($dataset as $row) {
             $attribut = [];
             foreach ($row->detail as $key => $detail) {
                 if ($key === 3 || $detail->kriteria_id == 4 || $detail->kriteria->nama === "gejala") {
-                    $attribut[$key] = $gejala[$detail->nilai];
+                    $gejala = Gejala::where('nama', 'like', '%' . $detail->nilai . '%')->first();
+                   if($gejala){
+                     $attribut[$key] = $gejala->id;
+                   }else{
+                     $attribut[$key] = 0;
+                   }
                 } else {
                     $attribut[$key] = intval($detail->nilai);
                 }

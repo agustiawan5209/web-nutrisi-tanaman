@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Guest;
 
 use Inertia\Inertia;
+use App\Models\Label;
+use App\Models\Gejala;
 use App\Models\Dataset;
 use App\Models\Kriteria;
 use App\Models\JenisTanaman;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Label;
 
 class DashboardController extends Controller
 {
@@ -23,9 +24,9 @@ class DashboardController extends Controller
         $distributionLabel = $this->setDistribusiLabel($training, $label);
         $meanKriteriaValue = $this->meanKriteriaValue($distributionLabel, "Sangat Baik", $kriteria);
         return Inertia::render("guest/dashboard", [
-            "distributionLabel"=> $distributionLabel,
-            "meanKriteriaValue"=> $meanKriteriaValue,
-            "label"=> Label::all(),
+            "distributionLabel" => $distributionLabel,
+            "meanKriteriaValue" => $meanKriteriaValue,
+            "label" => Label::all(),
         ]);
     }
 
@@ -41,7 +42,12 @@ class DashboardController extends Controller
             $attribut = [];
             foreach ($row->detail as $key => $detail) {
                 if ($key === 3 || $detail->kriteria_id == 4 || $detail->kriteria->nama === "gejala") {
-                    $attribut[$detail->kriteria->nama] = $gejala[$detail->nilai];
+                    $gejala = Gejala::where('nama', 'like', '%' . $detail->nilai . '%')->first();
+                    if ($gejala) {
+                        $attribut[$detail->kriteria->nama] = $gejala->id;
+                    } else {
+                        $attribut[$detail->kriteria->nama] = 0;
+                    }
                 } else {
                     $attribut[$detail->kriteria->nama] = intval($detail->nilai);
                 }

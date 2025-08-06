@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\App;
 use App\Http\Requests\StoreDatasetRequest;
 use App\Http\Requests\UpdateDatasetRequest;
 use App\Models\DetailDataset;
+use App\Models\Gejala;
 use App\Models\JenisTanaman;
 use App\Models\Label;
 
@@ -46,6 +47,7 @@ class DatasetController extends Controller
             'kriteria' => Kriteria::all(),
             'jenisTanaman' => JenisTanaman::all(),
             "opsiLabel"=> Label::all(),
+            "opsiGejala"=> Gejala::orderBy('id', 'desc')->get(),
             'breadcrumb' => array_merge(self::BASE_BREADCRUMB, [
                 ['title' => 'tambah', 'href' => '/admin/dataset/create'],
             ])
@@ -109,6 +111,7 @@ class DatasetController extends Controller
             'dataset' => $dataset,
             'kriteria' => Kriteria::all(),
             "opsiLabel"=> Label::all(),
+            "opsiGejala"=> Gejala::orderBy('id', 'desc')->get(),
             'jenisTanaman' => JenisTanaman::all(),
             'breadrumb' => array_merge(self::BASE_BREADCRUMB, [[
                 "title" => 'edit',

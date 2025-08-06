@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem, JenisTanamanTypes, KriteriaTypes, LabelTypes } from '@/types';
+import { BreadcrumbItem, GejalaTypes, JenisTanamanTypes, KriteriaTypes, LabelTypes } from '@/types';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
 import { LoaderIcon } from 'lucide-react';
@@ -26,6 +26,7 @@ interface RandomForestViewProps {
     kriteria?: KriteriaTypes[];
     jenisTanaman?: JenisTanamanTypes[];
     opsiLabel: LabelTypes[];
+    opsiGejala: GejalaTypes[];
 }
 
 interface TrainingData {
@@ -34,7 +35,7 @@ interface TrainingData {
     featureNames: string[];
 }
 
-export default function RandomForestView({ dataTraining, breadcrumb, titlePage, kriteria, jenisTanaman, opsiLabel }: RandomForestViewProps) {
+export default function RandomForestView({ dataTraining, breadcrumb, titlePage, kriteria, jenisTanaman, opsiLabel, opsiGejala }: RandomForestViewProps) {
     const breadcrumbs: BreadcrumbItem[] = useMemo(
         () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
         [breadcrumb],
@@ -205,7 +206,7 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
                     </div>
                     {kriteria && jenisTanaman && (
                         <div className="mt-6">
-                            <FormClassifier kriteria={kriteria} jenisTanaman={jenisTanaman} opsiLabel={opsiLabel}/>
+                            <FormClassifier kriteria={kriteria} jenisTanaman={jenisTanaman} opsiLabel={opsiLabel} opsiGejala={opsiGejala} />
                         </div>
                     )}
                     {dataTraining && (

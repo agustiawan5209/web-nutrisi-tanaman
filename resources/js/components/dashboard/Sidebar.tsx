@@ -7,6 +7,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { BarChart2Icon, ChevronLeft, ChevronRight, FolderClockIcon, GalleryHorizontal, Home, Leaf, LeafyGreen } from 'lucide-react';
 import { useState } from 'react';
 import { NavUser } from '../nav-user';
+import { SharedData } from '@/types';
 
 interface SidebarProps {
     className?: string;
@@ -15,6 +16,7 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ className, collapsed = false, onToggleCollapse }: SidebarProps) => {
+    const {auth} = usePage<SharedData>().props
     const [isCollapsed, setIsCollapsed] = useState(collapsed);
     const activeSection = usePage().url.split('/').pop() || 'Dashboard';
     // console.log('Active Section:', activeSection);
@@ -36,6 +38,10 @@ const Sidebar = ({ className, collapsed = false, onToggleCollapse }: SidebarProp
         { name: 'Random Forest', icon: <GalleryHorizontal size={20} />, href: route('randomForest.index'), active: 'random-forest' },
         { name: 'Riwayat Klasifikasi', icon: <FolderClockIcon size={20} />, href: route('admin.riwayat.index'), active: 'riwayat-forest' },
     ];
+
+    if(auth.role == 'super_admin'){
+        navItems.push({ name: 'Gejala', icon: <Home size={20} />, href: route('admin.gejala.index'), active: 'gejalas' })
+    }
 
     return (
         <div className={cn('flex h-full flex-col border-r bg-background transition-all duration-300', isCollapsed ? 'w-16' : 'w-64', className)}>

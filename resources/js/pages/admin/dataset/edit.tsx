@@ -1,19 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem, DatasetTypes, JenisTanamanTypes, KriteriaTypes, LabelTypes } from '@/types';
+import { BreadcrumbItem, DatasetTypes, GejalaTypes, JenisTanamanTypes, KriteriaTypes, LabelTypes } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-
-type JenisRumputLaut = {
-    nama: string;
-    jumlah: number;
-};
-
-
 
 interface PropsDatasetView {
     breadcrumb: BreadcrumbItem[];
@@ -22,6 +16,7 @@ interface PropsDatasetView {
     opsiLabel: LabelTypes[];
     titlePage?: string;
     dataset?: DatasetTypes; // Added for edit functionality
+    opsiGejala: GejalaTypes[];
 }
 type Form = {
     id: number;
@@ -33,7 +28,7 @@ type Form = {
     }[];
 };
 
-export default function EditDatasetView({ breadcrumb, kriteria, jenisTanaman, titlePage, dataset , opsiLabel}: PropsDatasetView) {
+export default function EditDatasetView({ breadcrumb, kriteria, jenisTanaman, titlePage, dataset, opsiLabel, opsiGejala }: PropsDatasetView) {
     const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
 
     // Initialize form with existing dataset data if available
@@ -43,10 +38,10 @@ export default function EditDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
         label: dataset?.label || '',
         attribut: kriteria.map((kriteriaItem, index) => {
             // Find the existing attribute value if editing
-            const existingAttribut = dataset?.detail.find(attr => attr.kriteria_id === kriteriaItem.id);
+            const existingAttribut = dataset?.detail.find((attr) => attr.kriteria_id === kriteriaItem.id);
             return {
                 kriteria_id: kriteriaItem.id,
-                nilai: existingAttribut?.nilai || null
+                nilai: existingAttribut?.nilai || null,
             };
         }),
     });
@@ -81,7 +76,7 @@ export default function EditDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
         });
     };
 
-    const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name: string, value: string) => {
         if (name && value !== undefined && data && data.attribut) {
             if (name === 'label' || name === 'jenis_tanaman') {
                 setData((prevData) => ({
@@ -91,10 +86,16 @@ export default function EditDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
             } else {
                 setData((prevData) => ({
                     ...prevData,
-                    attribut: {
-                        ...prevData.attribut,
-                        [name]: value,
-                    },
+                    attribut: prevData.attribut.map((item, index) => {
+                        if (index === Number(name)) {
+                            return {
+                                ...item,
+                                nilai: value,
+                            };
+                        } else {
+                            return item;
+                        }
+                    }),
                 }));
             }
         } else {
@@ -146,7 +147,55 @@ export default function EditDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
 
                     {/* Parameter Lingkungan */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        {kriteria.map((item: any, index: number) => {
+                        {kriteria.map((item: { nama: string; id: number; deskripsi: string }, index: number) => {
+                            if (item.nama.toLowerCase() === 'gejala') {
+                                return (
+                                    <div key={index}>
+                                        <Label className="text-xs text-gray-600">{item.nama}</Label>
+                                        <Select
+                                            value={data.attribut[index].nilai || ''}
+                                            required
+                                            onValueChange={(value) => handleSelectChange(index.toLocaleString(), value)}
+                                        >
+                                            <SelectTrigger className="input-minimal">
+                                                <SelectValue placeholder="Pilih" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {opsiGejala.map((gejala: any, index) => (
+                                                    <SelectItem key={index} value={gejala.nama}>
+                                                        {gejala.nama}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                );
+                            }
+                            if (item.nama.toLowerCase().includes('ph')) {
+                                return (
+                                    <div key={index}>
+                                        <Label htmlFor={`attribut.${index}`} className="text-xs text-gray-600">
+                                            {item.nama}
+                                        </Label>
+                                        <Select
+                                            value={data.attribut[index].nilai || ''}
+                                            required
+                                            onValueChange={(value) => handleSelectChange(index.toLocaleString(), value)}
+                                        >
+                                            <SelectTrigger className="input-minimal">
+                                                <SelectValue placeholder="Pilih" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {['0', '1', '2', '3', '4', '5', '6', '7', '8'].map((gejala: any, index) => (
+                                                    <SelectItem key={index} value={gejala}>
+                                                        {gejala}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                );
+                            }
                             return (
                                 <div key={index}>
                                     <Label className="text-xs text-gray-600">{item.nama}</Label>

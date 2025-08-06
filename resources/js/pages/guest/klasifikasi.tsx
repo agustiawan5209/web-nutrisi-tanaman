@@ -1,7 +1,7 @@
 import FormClassifier from '@/components/form-classifier';
 import { Button } from '@/components/ui/button';
 import MainLayout from '@/layouts/guest/main-layout';
-import { JenisTanamanTypes, KriteriaTypes, LabelTypes } from '@/types';
+import { GejalaTypes, JenisTanamanTypes, KriteriaTypes, LabelTypes } from '@/types';
 import { Link } from '@inertiajs/react';
 
 interface RandomForestViewProps {
@@ -9,8 +9,9 @@ interface RandomForestViewProps {
     kriteria?: KriteriaTypes[];
     jenisTanaman?: JenisTanamanTypes[];
     opsiLabel: LabelTypes[];
+    opsiGejala: GejalaTypes[];
 }
-export default function KlasifikasiView({ titlePage, kriteria, jenisTanaman, opsiLabel }: RandomForestViewProps) {
+export default function KlasifikasiView({ titlePage, kriteria, jenisTanaman, opsiLabel, opsiGejala }: RandomForestViewProps) {
     return (
         <>
             <MainLayout>
@@ -27,7 +28,7 @@ export default function KlasifikasiView({ titlePage, kriteria, jenisTanaman, ops
                                     <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">Klasifikasi Tanaman</h2>
                                     <p className="mt-1 text-gray-500 dark:text-gray-300">Masukkan kriteria untuk mendapatkan klasifikasi tanaman</p>
                                 </div>
-                                <FormClassifier kriteria={kriteria} jenisTanaman={jenisTanaman} opsiLabel={opsiLabel} />
+                                <FormClassifier kriteria={kriteria} jenisTanaman={jenisTanaman} opsiLabel={opsiLabel} opsiGejala={opsiGejala} />
                             </div>
                         </div>
                     </div>

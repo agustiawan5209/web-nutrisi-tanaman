@@ -4,21 +4,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Toast } from '@/components/ui/toast';
-import { JenisTanamanTypes, KriteriaTypes, LabelTypes, SharedData } from '@/types';
+import { GejalaTypes, JenisTanamanTypes, KriteriaTypes, LabelTypes, SharedData } from '@/types';
 import { useForm, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { RandomForestClassifier } from 'ml-random-forest';
 import React, { useEffect, useState } from 'react';
 
 
-const opsiGejala = [
-    { label: 'daun menguning', value: 0 },
-    { label: 'pertumbuhan lambat', value: 1 },
-    { label: 'ujung daun mengering', value: 2 },
-    { label: 'daun sehat', value: 3 },
-    { label: 'batang rapuh', value: 4 },
-    { label: 'daun menggulung', value: 5 },
-];
+
 type Dataset = {
     jenis_tanaman: string;
     label: string;
@@ -29,10 +22,12 @@ const FormClassifier = ({
     kriteria,
     jenisTanaman,
     opsiLabel,
+    opsiGejala,
 }: {
     kriteria: KriteriaTypes[];
     jenisTanaman: JenisTanamanTypes[];
     opsiLabel: LabelTypes[];
+    opsiGejala: GejalaTypes[];
 }) => {
     const page = usePage<SharedData>().props;
     const { auth } = page;
@@ -146,8 +141,8 @@ const FormClassifier = ({
         setResult({ predict: '', text: '' });
         try {
             const attribut = data.attribut.map((item) => {
-                const found = opsiGejala.find((gejala) => gejala.label === item);
-                return found ? found.value : Number(item);
+                const found = opsiGejala.find((gejala) => gejala.nama === item);
+                return found ? found.id : Number(item);
             });
             const tanaman = jenisTanaman.find((item) => item.nama === data.jenis_tanaman);
             attribut.push(tanaman?.id || 0);
@@ -234,9 +229,9 @@ const FormClassifier = ({
                                             <SelectValue placeholder="Pilih" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {opsiGejala.map((gejala: any, index) => (
-                                                <SelectItem key={index} value={gejala.label}>
-                                                    {gejala.label}
+                                            {opsiGejala.map((gejala: GejalaTypes, index) => (
+                                                <SelectItem key={index} value={gejala.nama}>
+                                                    {gejala.nama}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>

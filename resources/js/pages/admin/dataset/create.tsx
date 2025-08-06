@@ -5,14 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem, JenisTanamanTypes, KriteriaTypes, LabelTypes } from '@/types';
+import { BreadcrumbItem, GejalaTypes, JenisTanamanTypes, KriteriaTypes, LabelTypes } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-
-type JenisRumputLaut = {
-    nama: string;
-    jumlah: number;
-};
 
 type Dataset = {
     jenis_tanaman: string;
@@ -23,14 +18,7 @@ type Dataset = {
     }[];
 };
 
-const opsiGejala = [
-    { label: 'daun menguning', value: 0 },
-    { label: 'pertumbuhan lambat', value: 1 },
-    { label: 'ujung daun mengering', value: 2 },
-    { label: 'daun sehat', value: 3 },
-    { label: 'batang rapuh', value: 4 },
-    { label: 'daun menggulung', value: 5 },
-];
+
 
 interface PropsDatasetView {
     breadcrumb: BreadcrumbItem[];
@@ -38,9 +26,10 @@ interface PropsDatasetView {
     opsiLabel: LabelTypes[];
     jenisTanaman: JenisTanamanTypes[];
     titlePage?: string;
+    opsiGejala: GejalaTypes[];
 }
 
-export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, titlePage, opsiLabel }: PropsDatasetView) {
+export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, titlePage, opsiLabel, opsiGejala }: PropsDatasetView) {
     const breadcrumbs: BreadcrumbItem[] = breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : [];
     const { data, setData, post, processing, errors } = useForm<Dataset>({
         jenis_tanaman: '',
@@ -165,8 +154,8 @@ export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {opsiGejala.map((gejala: any, index) => (
-                                                    <SelectItem key={index} value={gejala.label}>
-                                                        {gejala.label}
+                                                    <SelectItem key={index} value={gejala.nama}>
+                                                        {gejala.nama}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>

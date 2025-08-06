@@ -53,6 +53,10 @@ export interface KriteriaTypes{
     nama: string;
     deskripsi: string;
 }
+export interface GejalaTypes{
+    id: number;
+    nama: string;
+}
 export interface LabelTypes{
     id: number;
     nama: string;
@@ -81,3 +85,5 @@ export interface DetailDatasetTypes{
     nilai: string;
     kriteria: KriteriaTypes;
 }
+
+

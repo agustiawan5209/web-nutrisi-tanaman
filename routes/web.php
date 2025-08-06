@@ -4,6 +4,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DatasetController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\GejalaController;
 use App\Http\Controllers\KriteriaController;
 use App\Http\Controllers\JenisTanamanController;
 use App\Http\Controllers\LabelController;
@@ -42,6 +43,17 @@ Route::middleware(['auth', 'verified', 'role:admin|super_admin'])->group(functio
                 Route::get('/{kriteria}/edit', 'edit')->name('edit');
                 Route::put('/{kriteria}', 'update')->name('update');
                 Route::delete('/{kriteria}', 'destroy')->name('destroy');
+            });
+        });
+        // Routes for gejala
+        Route::group(['prefix' => 'gejalas', 'as' => 'gejala.'], function () {
+            Route::controller(GejalaController::class)->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/create', 'create')->name('create');
+                Route::post('/', 'store')->name('store');
+                Route::get('/{gejala}/edit', 'edit')->name('edit');
+                Route::put('/{gejala}', 'update')->name('update');
+                Route::delete('/{gejala}', 'destroy')->name('destroy');
             });
         });
 

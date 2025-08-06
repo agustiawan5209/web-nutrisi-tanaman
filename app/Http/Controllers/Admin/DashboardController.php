@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Inertia\Inertia;
 use App\Models\Label;
+use App\Models\Gejala;
 use App\Models\Dataset;
 use App\Models\Kriteria;
 use App\Models\JenisTanaman;
@@ -41,7 +42,12 @@ class DashboardController extends Controller
             $attribut = [];
             foreach ($row->detail as $key => $detail) {
                 if ($key === 3 || $detail->kriteria_id == 4 || $detail->kriteria->nama === "gejala") {
-                    $attribut[$detail->kriteria->nama] = $gejala[$detail->nilai];
+                    $gejala = Gejala::where('nama', 'like', '%' . $detail->nilai . '%')->first();
+                    if ($gejala) {
+                        $attribut[$detail->kriteria->nama] = $gejala->id;
+                    } else {
+                        $attribut[$detail->kriteria->nama] = 0;
+                    }
                 } else {
                     $attribut[$detail->kriteria->nama] = intval($detail->nilai);
                 }
