@@ -97,9 +97,9 @@ export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={titlePage ?? 'Input Data Panen Rumput Laut'} />
+            <Head title={titlePage ?? 'Input Data Nutrisi Tanaman'} />
             <div className="mx-auto max-w-7xl rounded-xl border border-gray-100 bg-white p-6 shadow">
-                <h1 className="mb-6 text-center text-xl font-semibold text-primary">Input Data Panen Rumput Laut</h1>
+                <h1 className="mb-6 text-center text-xl font-semibold text-primary">Input Data Nutrisi Tanaman</h1>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Informasi Dasar */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
