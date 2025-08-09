@@ -99,7 +99,9 @@ const FormClassifier = ({
         const { name, value } = e.target;
 
         const key = name.split('.')[1];
-        setData((prevData) => ({
+        const numValue = Number(value);
+       if(!isNaN(numValue)){
+          setData((prevData) => ({
             ...prevData,
             attribut: prevData.attribut.map((item, index) => {
                 if (index === Number(key)) {
@@ -109,6 +111,7 @@ const FormClassifier = ({
                 }
             }),
         }));
+       }
     };
 
     const handleSelectChange = (name: string, value: string) => {

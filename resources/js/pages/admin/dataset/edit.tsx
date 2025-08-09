@@ -36,9 +36,9 @@ export default function EditDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
         id: dataset?.id ?? 0,
         jenis_tanaman: dataset?.jenis_tanaman || '',
         label: dataset?.label || '',
-        attribut: kriteria.map((kriteriaItem, index) => {
+        attribut: kriteria.map((kriteriaItem) => {
             // Find the existing attribute value if editing
-            const existingAttribut = dataset?.detail.find((attr) => attr.kriteria_id === kriteriaItem.id);
+            const existingAttribut = dataset?.detail.find((attr) => attr.kriteria_id == kriteriaItem.id);
             return {
                 kriteria_id: kriteriaItem.id,
                 nilai: existingAttribut?.nilai || null,

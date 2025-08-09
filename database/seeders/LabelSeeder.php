@@ -35,13 +35,6 @@ class LabelSeeder extends Seeder
                 "created_at" => "2025-07-17 10:21:27",
                 "updated_at" => "2025-07-17 10:21:27",
             ),
-            array(
-                "id" => 4,
-                "nama" => "Sangat Baik",
-                "deskripsi" => "Tanaman dalam kondisi sangat sehat dan optimal. Pertumbuhan berada di jalur ideal. Pertahankan rutinitas pemeliharaan dan pastikan parameter lingkungan tetap stabil.",
-                "created_at" => "2025-07-17 10:21:40",
-                "updated_at" => "2025-07-17 10:21:40",
-            ),
         );
 
         Label::insert($labels);
