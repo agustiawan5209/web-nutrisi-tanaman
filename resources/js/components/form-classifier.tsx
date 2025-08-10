@@ -10,8 +10,6 @@ import axios from 'axios';
 import { RandomForestClassifier } from 'ml-random-forest';
 import React, { useEffect, useState } from 'react';
 
-
-
 type Dataset = {
     jenis_tanaman: string;
     label: string;
@@ -99,19 +97,15 @@ const FormClassifier = ({
         const { name, value } = e.target;
 
         const key = name.split('.')[1];
-        const numValue = Number(value);
-       if(!isNaN(numValue)){
-          setData((prevData) => ({
-            ...prevData,
-            attribut: prevData.attribut.map((item, index) => {
-                if (index === Number(key)) {
-                    return value;
-                } else {
-                    return item;
-                }
-            }),
-        }));
-       }
+        if (/^\d*\.?\d*$/.test(value)) {
+            const numValue = Number(value);
+            if (!isNaN(numValue)) {
+                setData((prevData) => ({
+                    ...prevData,
+                    attribut: prevData.attribut.map((item, index) => (index === Number(key) ? value : item)),
+                }));
+            }
+        }
     };
 
     const handleSelectChange = (name: string, value: string) => {
@@ -150,7 +144,6 @@ const FormClassifier = ({
             const tanaman = jenisTanaman.find((item) => item.nama === data.jenis_tanaman);
             attribut.push(tanaman?.id || 0);
 
-
             if (model) {
                 const classifier = model.predict([attribut]);
 
@@ -160,7 +153,7 @@ const FormClassifier = ({
                     text: text,
                 });
                 if (auth.role !== 'admin') {
-                     await axios.post(route('riwayat-klasifikasi.store'), {
+                    await axios.post(route('riwayat-klasifikasi.store'), {
                         user: auth.user,
                         jenis_tanaman: data.jenis_tanaman,
                         label: predict,
@@ -172,7 +165,7 @@ const FormClassifier = ({
             // const predict = model?.predict();
             // Replace with your API endpoint for classification
         } catch (error) {
-            console.log(error)
+            console.log(error);
             setResult({
                 predict: 'Tidak Ditemukan',
                 text: 'Tidak Ditemukan',

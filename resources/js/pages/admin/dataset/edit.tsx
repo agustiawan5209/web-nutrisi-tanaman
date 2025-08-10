@@ -49,18 +49,23 @@ export default function EditDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         const key = name.split('.')[1];
-        setData((prevData) => ({
-            ...prevData,
-            attribut: prevData.attribut.map((item, index) => {
-                if (index === Number(key)) {
-                    return {
-                        ...item,
-                        nilai: value,
-                    };
-                }
-                return item;
-            }),
-        }));
+        if (/^\d*\.?\d*$/.test(value)) {
+            const numValue = Number(value);
+            if (!isNaN(numValue)) {
+                setData((prevData) => ({
+                    ...prevData,
+                    attribut: prevData.attribut.map((item, index) => {
+                        if (index === Number(key)) {
+                            return {
+                                ...item,
+                                nilai: value,
+                            };
+                        }
+                        return item;
+                    }),
+                }));
+            }
+        }
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -76,7 +81,7 @@ export default function EditDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
         });
     };
 
-  const handleSelectChange = (name: string, value: string) => {
+    const handleSelectChange = (name: string, value: string) => {
         if (name && value !== undefined && data && data.attribut) {
             if (name === 'label' || name === 'jenis_tanaman') {
                 setData((prevData) => ({

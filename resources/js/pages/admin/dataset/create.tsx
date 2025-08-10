@@ -18,8 +18,6 @@ type Dataset = {
     }[];
 };
 
-
-
 interface PropsDatasetView {
     breadcrumb: BreadcrumbItem[];
     kriteria: KriteriaTypes[];
@@ -46,18 +44,23 @@ export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
         const { name, value } = e.target;
 
         const key = name.split('.')[1];
-        setData((prevData) => ({
-            ...prevData,
-            attribut: prevData.attribut.map((item, index) => {
-                if (index === Number(key)) {
-                    return {
-                        ...item,
-                        nilai: value,
-                    };
-                }
-                return item;
-            }),
-        }));
+        if (/^\d*\.?\d*$/.test(value)) {
+            const numValue = Number(value);
+            if (!isNaN(numValue)) {
+                setData((prevData) => ({
+                    ...prevData,
+                    attribut: prevData.attribut.map((item, index) => {
+                        if (index === Number(key)) {
+                            return {
+                                ...item,
+                                nilai: value,
+                            };
+                        }
+                        return item;
+                    }),
+                }));
+            }
+        }
     };
     const handleSelectChange = (name: string, value: string) => {
         if (name && value !== undefined && data && data.attribut) {
