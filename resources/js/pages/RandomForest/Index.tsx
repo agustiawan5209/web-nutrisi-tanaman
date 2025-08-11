@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from '@/components/ui/button';
@@ -302,7 +303,7 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
                                     <h4 className="mb-2 font-medium">Model Accuracy</h4>
                                     <p>{accuracy?.toFixed(2)}%</p>
                                 </div>
-                                <div className="rounded bg-gray-50 p-4">
+                                {/* <div className="rounded bg-gray-50 p-4">
                                     <h4 className="mb-2 font-medium">Feature Importance</h4>
                                     <ul>
                                         {featureImportance &&
@@ -312,7 +313,7 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
                                                 </li>
                                             ))}
                                     </ul>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     )}
