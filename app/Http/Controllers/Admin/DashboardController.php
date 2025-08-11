@@ -23,7 +23,7 @@ class DashboardController extends Controller
         $kriteria = $data['kriteria'];
         $distributionLabel = $this->setDistribusiLabel($training, $label);
         $meanKriteriaValue = $this->meanKriteriaValue($distributionLabel, "Sehat", $kriteria);
-        dd($meanKriteriaValue);
+
         return Inertia::render("dashboard", [
             "distributionLabel" => $distributionLabel,
             "meanKriteriaValue" => $meanKriteriaValue,
