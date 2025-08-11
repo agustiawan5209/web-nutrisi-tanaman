@@ -201,6 +201,7 @@ export default function FormDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
                                         onChange={handleChange}
                                         className="input-minimal"
                                         placeholder={`masukkan ${item.nama}`}
+                                        required
                                     />
                                 </div>
                             );

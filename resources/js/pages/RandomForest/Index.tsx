@@ -216,6 +216,7 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
                                 <table className="min-w-full border bg-white">
                                     <thead>
                                         <tr>
+                                            <th className="border px-4 py-2">No.</th>
                                             {dataTraining.kriteria.map((kriteria, index) => (
                                                 <th key={index} className="border px-4 py-2">
                                                     {kriteria}
@@ -226,6 +227,7 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
                                     <tbody>
                                         {currentItems.map((row, rowIndex) => (
                                             <tr key={rowIndex}>
+                                                <td className="border px-4 py-2"> {indexOfFirstItem + rowIndex + 1}</td>
                                                 {row.map((cell, cellIndex) => (
                                                     <td key={cellIndex} className="border px-4 py-2">
                                                         {cell}

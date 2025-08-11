@@ -71,7 +71,7 @@ export default function IndikatorIndex({ dataset, breadcrumb, titlePage }: Indik
                                 {dataset.data && dataset.data.length ? (
                                     dataset.data.map((item, index) => (
                                         <TableRow key={item.id}>
-                                            <TableCell>{index + 1}</TableCell>
+                                            <TableCell>{index + 1 + (dataset.current_page - 1) * dataset.per_page}</TableCell>
                                             <TableCell>{item.jenis_tanaman}</TableCell>
                                             <TableCell>{item.label}</TableCell>
                                             <TableCell>
