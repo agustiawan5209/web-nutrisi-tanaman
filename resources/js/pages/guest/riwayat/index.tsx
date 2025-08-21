@@ -3,7 +3,7 @@ import PaginationTable from '@/components/pagination-table';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import AppLayout from '@/layouts/app-layout';
+import UserAuthLayout from '@/layouts/guest/user-auth-layout';
 import { BreadcrumbItem, DatasetTypes } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { EyeIcon, PenBoxIcon } from 'lucide-react';
@@ -46,6 +46,7 @@ export default function IndikatorIndex({ riwayat, breadcrumb, titlePage }: Indik
     );
 
     const [isDeleteDialog, setisDeleteDialog] = useState(false);
+
     const formatDate = (value: string) => {
         return new Date(value).toLocaleDateString('id-ID', {
             hour: 'numeric',
@@ -56,8 +57,9 @@ export default function IndikatorIndex({ riwayat, breadcrumb, titlePage }: Indik
             year: 'numeric',    // 2025
         });
     }
+    console.log(riwayat);
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <UserAuthLayout >
             <Head title={titlePage ?? 'Indikator'} />
 
             {/* Data */}
@@ -90,7 +92,7 @@ export default function IndikatorIndex({ riwayat, breadcrumb, titlePage }: Indik
                                             <TableCell>{item.label}</TableCell>
                                             <TableCell>
                                                 <div className="flex flex-row items-center gap-2">
-                                                    <Link href={route('admin.riwayat.show', { riwayat: item.id })}>
+                                                    <Link href={route('guest.riwayat.show', { riwayat: item.id })}>
                                                         <Button variant={'default'} type="button" className="bg-chart-1">
                                                             <EyeIcon size={4} />
                                                         </Button>
@@ -114,6 +116,6 @@ export default function IndikatorIndex({ riwayat, breadcrumb, titlePage }: Indik
                     </div>
                 </div>
             </Card>
-        </AppLayout>
+        </UserAuthLayout>
     );
 }

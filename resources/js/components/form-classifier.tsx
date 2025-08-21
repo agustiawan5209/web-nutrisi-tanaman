@@ -154,6 +154,7 @@ const FormClassifier = ({
                 });
                 if (auth.role !== 'admin') {
                     await axios.post(route('riwayat-klasifikasi.store'), {
+                        user_id: auth.user.id,
                         user: auth.user,
                         jenis_tanaman: data.jenis_tanaman,
                         label: predict,
@@ -257,6 +258,7 @@ const FormClassifier = ({
                                             ))}
                                         </SelectContent>
                                     </Select>
+                                    <p className='text-gray-400 text-xs'>ph 1...5 itu kurang 6..7 itu sehat dan 8 itu brlebihan</p>
                                 </div>
                             );
                         }

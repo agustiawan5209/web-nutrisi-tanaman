@@ -22,6 +22,7 @@ class StoreRiwayatKlasifikasiRequest extends FormRequest
     public function rules(): array
     {
         return [
+            "user_id"=> "required",
             "user"=> "required",
             "label"=> "required|string|max:50",
             "jenis_tanaman"=> "required|string|exists:jenis_tanamen,nama",

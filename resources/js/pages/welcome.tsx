@@ -47,9 +47,6 @@ export default function LandingPage() {
                             Mulai Sekarang
                             <ArrowRight className="ml-2 h-5 w-5" />
                         </Button>
-                        <Button size="lg" variant="outline" className="border-green-600 px-8 py-3 text-lg text-green-600 hover:bg-green-50">
-                            Lihat Demo
-                        </Button>
                     </div>
                 </div>
             </section>

@@ -11,6 +11,7 @@ class RiwayatKlasifikasi extends Model
     use HasFactory;
 
     protected $fillable = [
+        "user_id",
         "user",
         "label",
         "jenis_tanaman",

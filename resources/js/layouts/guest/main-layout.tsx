@@ -17,22 +17,35 @@ export default function MainLayout({ children }: PropsWithChildren<{}>) {
                         <Leaf className="h-8 w-8 text-green-600" />
                         <span className="text-xl font-bold text-gray-800">HydroAI</span>
                     </div>
-                    <nav className="hidden space-x-6 md:flex">
-                        <a href="#features" className="text-gray-600 transition-colors hover:text-green-600">
-                            Fitur
-                        </a>
-                        <a href="#how-it-works" className="text-gray-600 transition-colors hover:text-green-600">
-                            Cara Kerja
-                        </a>
-                    </nav>
+
                     {auth.user ? (
-                        <Link method="post" as='button'  href={route('logout')} className="bg-green-600 hover:bg-green-700 h-10 text-white px-6 has-[>svg]:px-4 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive">
-                            <span >Logout</span>
-                        </Link>
+                        <>
+                            <nav className="hidden space-x-6 md:flex">
+                                <Link href={route('guest.klasifikasi.index')} className="text-gray-600 transition-colors hover:text-green-600">
+                                    Mulai Prediksi
+                                </Link>
+                                <Link href={route('guest.riwayat.index')} className="text-gray-600 transition-colors hover:text-green-600">
+                                    Riwayat
+                                </Link>
+                            </nav>
+                            <Link method="post" as='button' href={route('logout')} className="bg-green-600 hover:bg-green-700 h-10 text-white px-6 has-[>svg]:px-4 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive">
+                                <span >Logout</span>
+                            </Link>
+                        </>
                     ) : (
-                        <Link href={route('login')}>
-                            <Button className="bg-green-600 hover:bg-green-700">Masuk</Button>
-                        </Link>
+                        <>
+                            <nav className="hidden space-x-6 md:flex">
+                                <a href="#features" className="text-gray-600 transition-colors hover:text-green-600">
+                                    Fitur
+                                </a>
+                                <a href="#how-it-works" className="text-gray-600 transition-colors hover:text-green-600">
+                                    Cara Kerja
+                                </a>
+                            </nav>
+                            <Link href={route('login')}>
+                                <Button className="bg-green-600 hover:bg-green-700">Masuk</Button>
+                            </Link>
+                        </>
                     )}
                 </div>
             </header>
@@ -44,10 +57,10 @@ export default function MainLayout({ children }: PropsWithChildren<{}>) {
                 <div className="container mx-auto">
                     <div className="grid gap-8 md:grid-cols-2">
 
-                            <div className="mb-4 flex items-center space-x-2">
-                                <Leaf className="h-8 w-8 text-green-400" />
-                                <span className="text-xl font-bold">HydroAI</span>
-                            </div>
+                        <div className="mb-4 flex items-center space-x-2">
+                            <Leaf className="h-8 w-8 text-green-400" />
+                            <span className="text-xl font-bold">HydroAI</span>
+                        </div>
                         <p className="text-gray-400">Sistem pendukung keputusan berbasis AI untuk nutrisi tanaman hidroponik yang optimal.</p>
                         {/* <div>
                             <h3 className="mb-4 font-semibold">Produk</h3>

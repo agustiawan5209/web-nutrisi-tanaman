@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('riwayat_klasifikasis', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id');
             $table->json('user');
             $table->string('label');
             $table->string('jenis_tanaman');

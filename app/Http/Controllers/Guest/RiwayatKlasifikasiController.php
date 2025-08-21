@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Guest;
 
 use Inertia\Inertia;
 use App\Models\Label;
@@ -8,6 +8,8 @@ use App\Models\Kriteria;
 use App\Models\JenisTanaman;
 use App\Models\RiwayatKlasifikasi;
 use Illuminate\Support\Facades\App;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreRiwayatKlasifikasiRequest;
 use App\Http\Requests\UpdateRiwayatKlasifikasiRequest;
 
@@ -21,7 +23,7 @@ class RiwayatKlasifikasiController extends Controller
         ],
         [
             'title' => 'riwayat-klasifikasi',
-            'href' => '/admin/riwayat-klasifikasi/',
+            'href' => '/guest/riwayat-klasifikasi/',
         ],
     ];
     /**
@@ -30,9 +32,9 @@ class RiwayatKlasifikasiController extends Controller
     public function index()
     {
         // Handle the request to display the Random Forest model index page
-        $data = RiwayatKlasifikasi::orderBy('created_at', 'desc')->paginate(10);
+        $data = RiwayatKlasifikasi::where('user_id', '=', Auth::user()->id)->orderBy('created_at', 'desc')->paginate(10);
         //   dd($data);
-        return Inertia::render('admin/riwayat/index', [
+        return Inertia::render('guest/riwayat/index', [
             'riwayat' => $data,
             "kriteria" => Kriteria::all(),
             "jenisTanaman" => JenisTanaman::all(),
@@ -62,6 +64,7 @@ class RiwayatKlasifikasiController extends Controller
     public function store(StoreRiwayatKlasifikasiRequest $request)
     {
         $klasifikasi = RiwayatKlasifikasi::create([
+            'user_id' => $request->user_id,
             'user' => json_encode($request->user),
             'label' => $request->label,
             'jenis_tanaman' => $request->jenis_tanaman,
@@ -79,7 +82,7 @@ class RiwayatKlasifikasiController extends Controller
      */
     public function show(RiwayatKlasifikasi $riwayat)
     {
-        return Inertia::render('admin/riwayat/show', [
+        return Inertia::render('guest/riwayat/show', [
             'riwayat' => $riwayat,
             "kriteria" => Kriteria::all(),
             "jenisTanaman" => JenisTanaman::all(),
@@ -117,7 +120,7 @@ class RiwayatKlasifikasiController extends Controller
         return $databaseHelper(
             operation: fn() => $riwayatKlasifikasi->delete(),
             successMessage: 'Kategori Berhasil Di Hapus!',
-            redirectRoute: 'admin.klasifikasi.index'
+            redirectRoute: 'guest.klasifikasi.index'
         );
     }
 }
