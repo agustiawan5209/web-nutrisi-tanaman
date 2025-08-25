@@ -110,7 +110,6 @@ class RandomForestController extends Controller
                 JenisTanaman::where('nama', $row->jenis_tanaman)->first()->id,
             ]);
         }
-        dd($data);
         return [
             'training' => array_values($data),
             'kriteria' => $kriteria_X,
