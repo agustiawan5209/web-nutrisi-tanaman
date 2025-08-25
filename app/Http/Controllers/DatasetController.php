@@ -70,7 +70,7 @@ class DatasetController extends Controller
     private function addDataset($request)
     {
         $dataset = new Dataset();
-        $dataset->label = $request['label'];
+        $dataset->label = $request['label'] ?? null;
         $dataset->jenis_tanaman = $request['jenis_tanaman'];
         $dataset->data = json_encode($request['attribut']);
         $dataset->save();

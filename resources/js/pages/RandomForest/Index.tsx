@@ -9,23 +9,27 @@ import { BreadcrumbItem, GejalaTypes, JenisTanamanTypes, KriteriaTypes, LabelTyp
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
 import { LoaderIcon } from 'lucide-react';
-import { RandomForestClassifier } from 'ml-random-forest';
+import { RandomForestClassifier, RandomForestRegression } from 'ml-random-forest';
 import { useEffect, useMemo, useState } from 'react';
 import FormClassifier from '@/components/form-classifier';
-
-interface RandomForestClassifierWithEstimators extends RandomForestClassifier {
-    estimators?: any[];
-}
+import { loadModelFromDB } from '@/utils/modelStorage';
+import TrainModels from '@/components/train-model';
+import FormPrediction from '@/components/form-prediction';
 
 interface RandomForestViewProps {
     dataTraining: {
         training: string[][];
-        kriteria: string[];
+        kriteria: KriteriaTypes[];
+        transactionY: {
+            ph: number;
+            ppm: number;
+            ketinggianAir: number;
+        }[]
     };
     breadcrumb?: BreadcrumbItem[];
     titlePage?: string;
-    kriteria?: KriteriaTypes[];
-    jenisTanaman?: JenisTanamanTypes[];
+    kriteria: KriteriaTypes[];
+    jenisTanaman: JenisTanamanTypes[];
     opsiLabel: LabelTypes[];
     opsiGejala: GejalaTypes[];
 }
@@ -41,152 +45,63 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
         () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
         [breadcrumb],
     );
+    // console.log(dataTraining.transactionY)
+    const [isLoadingModel, setIsLoadingModel] = useState<boolean>(false);
+    const [errorModel, setErrorModel] = useState<{ text: string; status: boolean }>({ text: '', status: false });
 
-    const [trainingData, setTrainingData] = useState<TrainingData | null>(null);
-    const [model, setModel] = useState<RandomForestClassifier | null>(null);
-    const [prediction, setPrediction] = useState<number[] | null>(null);
-    const [accuracy, setAccuracy] = useState<number | null>(null);
-    const [featureImportance, setFeatureImportance] = useState<{ [key: string]: number } | null>(null);
-    const [confusionMatrix, setConfusionMatrix] = useState<number[][] | null>(null);
-    const [splitData, setSplitData] = useState<{
-        trainFeatures: number[][];
-        trainLabels: number[];
-        testFeatures: number[][];
-        testLabels: number[];
-    } | null>(null);
-    // Preprocess data
-    useEffect(() => {
-        if (dataTraining && dataTraining.training && dataTraining.kriteria) {
-            // Convert string data to numerical format
-            const features: number[][] = [];
-            const labels: number[] = [];
+    const [models, setModels] = useState({
+        ph: null as RandomForestRegression | null,
+        ppm: null as RandomForestRegression | null,
+        ketinggianAir: null as RandomForestRegression | null,
+    });
 
-            // Skip header row if exists
-            for (let i = 0; i < dataTraining.training.length; i++) {
-                const row = dataTraining.training[i];
-                // Last column is assumed to be the label
-                const featureRow = row.slice(0, -1).map(Number);
-                features.push(featureRow);
-                labels.push(opsiLabel.find((label) => label.nama === row[row.length - 1])?.id || 0);
-            }
-
-            setTrainingData({
-                features,
-                labels,
-                featureNames: dataTraining.kriteria.slice(0, -1),
-            });
-            const { trainFeatures, trainLabels, testFeatures, testLabels } = splitDataTraining(features, labels, 0.8);
-            setSplitData({ trainFeatures, trainLabels, testFeatures, testLabels });
-        }
-    }, [dataTraining]);
-    // Bagi data menjadi training dan test set
-
-    // Train model when data is ready
-    const [loading, setLoading] = useState(false);
-    const [resultPrediction, setResultPrediction] = useState<{actual: number, predicted: number}[]>([{
-        actual: 0,
-        predicted: 0
-    }])
-    const runTrainingModel = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        setLoading(true);
-        setTimeout(() => {
-            try {
-                if (trainingData) {
-                    const { trainFeatures, trainLabels, testFeatures, testLabels } = {
-                        trainFeatures: splitData?.trainFeatures ?? [],
-                        trainLabels: splitData?.trainLabels ?? [],
-                        testFeatures: splitData?.testFeatures ?? [],
-                        testLabels: splitData?.testLabels ?? [],
-                    }
-                    const options = {
-                        seed: 42,
-                        maxFeatures: 2,
-                        replacement: true,
-                        nEstimators: 100,
-                        // maxDepth: 5, // Tambahkan pembatasan kedalaman
-                        useSampleBagging: true,
-                    };
-
-                    const classifier = new RandomForestClassifier(options);
-                    classifier.train(trainFeatures, trainLabels);
-
-                    // Evaluasi menggunakan test set, bukan data training
-                    const testPredictions = classifier.predict(testFeatures);
-
-                    let correct = 0;
-                    for (let i = 0; i < testPredictions.length; i++) {
-                        setResultPrediction(resultPrediction => [...resultPrediction, {actual: testLabels[i], predicted: testPredictions[i]}])
-                        if (testPredictions[i] === testLabels[i]) {
-                            correct++;
-                        }
-                    }
-                    const acc = (correct / testPredictions.length) * 100;
-                    const cfMatrix = classifier.getConfusionMatrix();
-                    // Compute feature importance manually (using mean decrease in impurity as a proxy)
-                    // This is a simple approximation since ml-random-forest does not provide feature importance directly
-                    const trees = (classifier as RandomForestClassifierWithEstimators).estimators || [];
-                    const featureCount = trainingData.featureNames.length;
-                    const importances = new Array(featureCount).fill(0);
-
-                    trees.forEach((tree: any) => {
-                        if (tree && tree.featureImportances) {
-                            tree.featureImportances.forEach((imp: number, idx: number) => {
-                                importances[idx] += imp;
-                            });
-                        } else if (tree && tree.root && tree.root.splitFeature !== undefined) {
-                            // fallback: count splits per feature
-                            const countSplits = (node: any, counts: number[]) => {
-                                if (node.splitFeature !== undefined && node.splitFeature !== null) {
-                                    counts[node.splitFeature]++;
-                                    if (node.left) countSplits(node.left, counts);
-                                    if (node.right) countSplits(node.right, counts);
-                                }
-                            };
-                            countSplits(tree.root, importances);
-                        }
-                    });
-
-                    // Compute feature importance using a utility function
-                    const featureImportanceMap = computeFeatureImportance(classifier, trainingData.featureNames);
-                    // console.log(featureImportanceMap)
-                    // Save Model
-                    setConfusionMatrix(cfMatrix);
-                    setModel(classifier);
-                    setPrediction(testPredictions);
-                    setAccuracy(acc);
-                    setFeatureImportance(featureImportanceMap);
-                }
-            } catch (error) {
-                console.error('Error training model:', error);
-            } finally {
-                setLoading(false);
-            }
-            setLoading(false);
-        }, 1000);
+    const [normalizationParams, setNormalizationParams] = useState<any>(null);
+    const [isLoadingModels, setIsLoadingModels] = useState(false);
+    const [indikatorData, setIndikatorData] = useState<KriteriaTypes[]>(kriteria ?? [])
+    const handleModelsTrained = (
+        trainedModels: {
+            ph: RandomForestRegression;
+            ppm: RandomForestRegression;
+            ketinggianAir: RandomForestRegression;
+        },
+        params: any,
+    ) => {
+        setModels(trainedModels);
+        setNormalizationParams(params);
     };
 
-    const saveModel = async () => {
-        if (model) {
+    // Memuat model saat komponen mount
+    useEffect(() => {
+        const loadModels = async () => {
+            setIsLoadingModels(true);
             try {
-                await axios.post('/random-forest/store', {
-                    model: model.toJSON(),
+                const [
+                    { indikator: indikator0, model: phModel },
+                    { indikator: indikator1, model: ppmModel },
+                    { indikator: indikator2, model: ketinggianAirModel },
+                ] = await Promise.all([
+                    loadModelFromDB('ph'),
+                    loadModelFromDB('ppm'),
+                    loadModelFromDB('ketinggianAir'),
+                ]);
+                // console.log(indikator0)
+                setIndikatorData(indikator0);
+
+                setModels({
+                    ph: phModel,
+                    ppm: ppmModel,
+                    ketinggianAir: ketinggianAirModel,
                 });
-            } catch (error) {
-                console.error('Error saving model:', error);
+
+
+            } finally {
+                setIsLoadingModels(false);
             }
-        }
-    };
-    useEffect(() => {
-        saveModel();
-    }, [model]);
+        };
 
-    const findLabel = (value: number) => {
-        return opsiLabel.find((label) => label.id === value)?.nama;
-    };
-
-    //  history tabel
+        loadModels();
+    }, []);
+  //  history tabel
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
@@ -195,22 +110,16 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = dataTraining?.training.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(dataTraining?.training.length / itemsPerPage);
+    const findGejala = (value: number) => {
+        return opsiGejala.find((label) => label.id === value)?.nama;
+    };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={titlePage ?? 'Indikator'} />
 
             {/* Data */}
             <Card>
-                <div className="container mx-auto overflow-hidden px-4 py-4">
-                    <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <h2 className="text-lg font-bold md:text-xl">Algoritma Random Forest</h2>
-                    </div>
-                    {kriteria && jenisTanaman && (
-                        <div className="mt-6">
-                            <FormClassifier kriteria={kriteria} jenisTanaman={jenisTanaman} opsiLabel={opsiLabel} opsiGejala={opsiGejala} />
-                        </div>
-                    )}
-                    {dataTraining && (
+                 {dataTraining && (
                         <div className="mt-4">
                             <h3 className="text-md mb-2 font-semibold">Data Training</h3>
                             <div className="overflow-x-auto">
@@ -223,6 +132,7 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
                                                     {kriteria}
                                                 </th>
                                             ))}
+                                            <th className="border px-4 py-2">Jenis Tanaman</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -288,139 +198,44 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
                             </div>
                         </div>
                     )}
-
-                    <form onSubmit={runTrainingModel} className="mx-auto my-4 max-w-sm">
-                        <Button type="submit" variant={'default'}>
-                            {loading && <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />}
-                            Mulai Pelatihan Model
-                        </Button>
-                    </form>
-                    {model && (
-                        <div className="mt-6">
-                            <h3 className="text-md mb-2 font-semibold">Model Information</h3>
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                <div className="rounded bg-gray-50 p-4">
-                                    <h4 className="mb-2 font-medium">Model Accuracy</h4>
-                                    <p>{accuracy?.toFixed(2)}%</p>
-                                </div>
-                                {/* <div className="rounded bg-gray-50 p-4">
-                                    <h4 className="mb-2 font-medium">Feature Importance</h4>
-                                    <ul>
-                                        {featureImportance &&
-                                            Object.entries(featureImportance).map(([feature, importance]) => (
-                                                <li key={feature} className="mb-1">
-                                                    {feature}: {importance.toFixed(4)}
-                                                </li>
-                                            ))}
-                                    </ul>
-                                </div> */}
-                            </div>
+                {/* Result Section */}
+                {dataTraining.training.length > 5 && kriteria.length > 0 && !isLoadingModel ? (
+                    <TrainModels indikator={dataTraining.kriteria} transactionX={dataTraining.training} transactionY={dataTraining.transactionY} onModelsTrained={handleModelsTrained} />
+                ) : (
+                    <div className="rounded-lg bg-white p-6 shadow-sm">
+                        <div className="text-center">
+                            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1}
+                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                                />
+                            </svg>
+                            <h3 className="mt-2 text-sm font-medium text-gray-900">Data tidak cukup</h3>
+                            <p className="mt-1 text-sm text-gray-500">
+                                Data panen harus lebih dari lima agar model dapat diuji. Silakan tambahkan data panen terlebih dahulu.
+                            </p>
                         </div>
-                    )}
-
-                    {prediction && (
-                        <>
-                            <div className="mt-6">
-                                <h3 className="text-md mb-2 font-semibold">Predictions</h3>
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full border bg-white">
-                                        <thead>
-                                            <tr>
-                                                <th className="border px-4 py-2">Actual</th>
-                                                <th className="border px-4 py-2">Predicted</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {resultPrediction.map((label, index) => {
-                                                console.log(label)
-                                                return (
-                                                <tr key={index}>
-                                                    <td className="border px-4 py-2">{findLabel(label.actual)}</td>
-                                                    <td className="border px-4 py-2">{findLabel(label.predicted)}</td>
-                                                </tr>
-                                            )
-                                            })}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div className="mt-6">
-                                <h3 className="text-md mb-2 font-semibold">Confusion Matrix</h3>
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full border bg-white">
-                                        <thead>
-                                            <tr>
-                                                <th className="border px-4 py-2">Predicted \ Actual</th>
-                                                {opsiLabel.map((label) => (
-                                                    <th key={label.id} className="border px-4 py-2">
-                                                        {label.nama}
-                                                    </th>
-                                                ))}
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {confusionMatrix?.map((row, rowIndex) => (
-                                                <tr key={rowIndex}>
-                                                    <td className="border px-4 py-2">{findLabel(rowIndex +1)}</td>
-                                                    {row.map((value, colIndex) => (
-                                                        <td key={colIndex} className="border px-4 py-2">
-                                                            {value}
-                                                        </td>
-                                                    ))}
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </>
-                    )}
-                </div>
+                    </div>
+                )}
+                {models && (
+                    <FormPrediction
+                        models={models}
+                        normalizationParams={normalizationParams}
+                        opsiGejala={opsiGejala}
+                        jenisTanaman={jenisTanaman}
+                        indikator={dataTraining.kriteria}
+                        transactionX={dataTraining.training}
+                        actualData={{
+                            ph: dataTraining.transactionY.map((p) => p.ph),
+                            ppm: dataTraining.transactionY.map((p) => p.ppm),
+                            ketinggianAir: dataTraining.transactionY.map((p) => p.ketinggianAir),
+                        }}
+                    />
+                )}
             </Card>
         </AppLayout>
     );
 }
 
-const splitDataTraining = (features: number[][], labels: number[], splitRatio = 0.7) => {
-    const shuffledIndices = features.map((_, i) => i).sort(() => Math.random() - 0.5);
-    const splitIndex = Math.floor(features.length * splitRatio);
-
-    const trainFeatures = shuffledIndices.slice(0, splitIndex).map((i) => features[i]);
-    const trainLabels = shuffledIndices.slice(0, splitIndex).map((i) => labels[i]);
-    const testFeatures = shuffledIndices.slice(splitIndex).map((i) => features[i]);
-    const testLabels = shuffledIndices.slice(splitIndex).map((i) => labels[i]);
-
-    return { trainFeatures, trainLabels, testFeatures, testLabels };
-};
-
-function computeFeatureImportance(classifier: RandomForestClassifier, featureNames: string[]): { [key: string]: number } {
-    const trees = (classifier as any).estimators || [];
-    const featureCount = featureNames.length;
-    const importances = new Array(featureCount).fill(0);
-
-    trees.forEach((tree: any) => {
-        if (tree && tree.featureImportances) {
-            tree.featureImportances.forEach((imp: number, idx: number) => {
-                importances[idx] += imp;
-            });
-        } else if (tree && tree.root && tree.root.splitFeature !== undefined) {
-            // fallback: count splits per feature
-            const countSplits = (node: any, counts: number[]) => {
-                if (node.splitFeature !== undefined && node.splitFeature !== null) {
-                    counts[node.splitFeature]++;
-                    if (node.left) countSplits(node.left, counts);
-                    if (node.right) countSplits(node.right, counts);
-                }
-            };
-            countSplits(tree.root, importances);
-        }
-    });
-
-    // Normalize importances
-    const total = importances.reduce((a, b) => a + b, 0) || 1;
-    const featureImportanceMap: { [key: string]: number } = {};
-    featureNames.forEach((name, index) => {
-        featureImportanceMap[name] = importances[index] / total;
-    });
-    return featureImportanceMap;
-}

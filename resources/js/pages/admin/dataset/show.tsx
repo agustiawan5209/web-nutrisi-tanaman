@@ -54,10 +54,6 @@ export default function HarvestDetailPage({ dataset, breadcrumb, titlePage }: Ha
                                     <span className="text-base text-gray-600">Jenis Tanaman</span>
                                     <span className="text-base font-medium">{data.jenis_tanaman} Ha</span>
                                 </div>
-                                <div className="flex justify-between">
-                                    <span className="text-base text-gray-600">Label (Nutrisi)</span>
-                                    <span className="text-base font-medium">{data.label}</span>
-                                </div>
                             </div>
                         </div>
 

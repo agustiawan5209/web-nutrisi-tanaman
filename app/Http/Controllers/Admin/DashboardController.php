@@ -10,6 +10,7 @@ use App\Models\Kriteria;
 use App\Models\JenisTanaman;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\RiwayatKlasifikasi;
 
 class DashboardController extends Controller
 {
@@ -21,13 +22,11 @@ class DashboardController extends Controller
         $data = $this->getData();
         $training = collect($data['training']);
         $kriteria = $data['kriteria'];
-        $distributionLabel = $this->setDistribusiLabel($training, $label);
-        $meanKriteriaValue = $this->meanKriteriaValue($distributionLabel, "Sehat", $kriteria);
-
         return Inertia::render("dashboard", [
-            "distributionLabel" => $distributionLabel,
-            "meanKriteriaValue" => $meanKriteriaValue,
-            "label" => Label::all(),
+            "jenisTanaman" => JenisTanaman::all()->count(),
+            "kriteria" => Kriteria::all()->count(),
+            "dataset" => Dataset::all()->count(),
+            "riwayat" => RiwayatKlasifikasi::all()->count(),
         ]);
     }
 
@@ -63,40 +62,5 @@ class DashboardController extends Controller
             'training' => $data,
             'kriteria' => array_merge($kriteria, ["jenis_tanaman", 'label']),
         ];
-    }
-    private function setDistribusiLabel($training, $label)
-    {
-
-        try {
-
-            $distributionLabel = [];
-            foreach ($label as $item) {
-                $distributionLabel[$item] = [];
-            }
-
-            foreach ($training as $row) {
-                $distributionLabel[$row['label']][] = $row;
-            }
-
-            return $distributionLabel;
-        } catch (\Exception $e) {
-            return [];
-        }
-    }
-
-    private function meanKriteriaValue($training, $label, $kriteria = [])
-    {
-        $gejala = Gejala::orderBy('id', 'desc')->get()->pluck('id')->toArray();
-        try {
-            $result = [];
-            $kriterias = collect($kriteria)->diff(['jenis_tanaman', 'label'])->values();
-
-            foreach ($kriterias as $item) {
-                $result[$item] = collect($training[$label])->avg($item);
-            }
-            return $result;
-        } catch (\Exception $e) {
-            return [];
-        }
     }
 }

@@ -4,9 +4,10 @@ import { LabelTypes, type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
 interface GuestDashboardProps {
-    meanKriteriaValue: string[];
-    distributionLabel: string[];
-    label: LabelTypes[];
+    jenisTanaman: number;
+    kriteria: number;
+    dataset: number;
+    riwayat: number;
 }
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -14,7 +15,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/dashboard',
     },
 ];
-export default function Dashboard({ meanKriteriaValue, distributionLabel, label }: GuestDashboardProps) {
+export default function Dashboard({jenisTanaman, kriteria, dataset, riwayat }: GuestDashboardProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -25,33 +26,36 @@ export default function Dashboard({ meanKriteriaValue, distributionLabel, label 
                 </header>
 
                 {/* Metric Cards */}
-                <section className="mb-8 flex gap-3">
-                    <div>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                            {label.map((item: any, index) => (
-                                <KPICard
-                                    key-={item.id}
-                                    title={`Jumlah Dataset ${item.nama}`}
-                                    value={distributionLabel[item.nama].length}
-                                    unit={'data'}
-                                    status="normal"
-                                    trend="stable"
-                                />
-                            ))}
-                        </div>
-                    </div>
-                    <div className="flex-1/3 space-y-2 rounded bg-gray-50 p-4">
-                        <h4 className="mb-2 font-medium">Rata Rata Kriteria Untuk Nutrisi Sangat Baik</h4>
-                        <ul className="space-y-1">
-                            {meanKriteriaValue &&
-                                Object.entries(meanKriteriaValue).map(([feature, importance], index) => (
-                                    <li key={index} className="text-sm">
-                                        {feature}: {typeof importance === 'string' ? importance : Number(importance).toFixed(4)}
-                                    </li>
-                                ))}
-                        </ul>
-                    </div>
-                </section>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <KPICard
+                        title={`Jumlah Jenis Tanaman`}
+                        value={jenisTanaman}
+                        unit={'data'}
+                        status="normal"
+                        trend="stable"
+                    />
+                    <KPICard
+                        title={`Jumlah Kriteria`}
+                        value={kriteria}
+                        unit={'data'}
+                        status="normal"
+                        trend="stable"
+                    />
+                    <KPICard
+                        title={`Jumlah Dataset`}
+                        value={dataset}
+                        unit={'data'}
+                        status="normal"
+                        trend="stable"
+                    />
+                    <KPICard
+                        title={`Jumlah Riwayat Klasifikasi`}
+                        value={riwayat}
+                        unit={'data'}
+                        status="normal"
+                        trend="stable"
+                    />
+                </div>
             </div>
         </AppLayout>
     );

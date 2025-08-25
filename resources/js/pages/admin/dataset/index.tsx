@@ -63,7 +63,7 @@ export default function IndikatorIndex({ dataset, breadcrumb, titlePage }: Indik
                                 <TableRow>
                                     <TableHead className="cursor-pointer">no</TableHead>
                                     <TableHead className="cursor-pointer">Jenis Tanaman</TableHead>
-                                    <TableHead className="cursor-pointer">Label (Nutrisi)</TableHead>
+                                    {/* <TableHead className="cursor-pointer">Label (Nutrisi)</TableHead> */}
                                     <TableHead className="cursor-pointer">Aksi</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -73,7 +73,6 @@ export default function IndikatorIndex({ dataset, breadcrumb, titlePage }: Indik
                                         <TableRow key={item.id}>
                                             <TableCell>{index + 1 + (dataset.current_page - 1) * dataset.per_page}</TableCell>
                                             <TableCell>{item.jenis_tanaman}</TableCell>
-                                            <TableCell>{item.label}</TableCell>
                                             <TableCell>
                                                 <div className="flex flex-row items-center gap-2">
                                                     <DeleteConfirmationForm

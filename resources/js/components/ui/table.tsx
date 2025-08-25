@@ -1,12 +1,11 @@
 import * as React from "react"
-
 import { cn } from "@/lib/utils"
 
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
+  <div className="relative w-full overflow-auto rounded-lg border border-border shadow-sm">
     <table
       ref={ref}
       className={cn("w-full caption-bottom text-sm", className)}
@@ -20,7 +19,11 @@ const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+  <thead
+    ref={ref}
+    className={cn("[&_tr]:border-b bg-muted/30", className)}
+    {...props}
+  />
 ))
 TableHeader.displayName = "TableHeader"
 
@@ -43,7 +46,7 @@ const TableFooter = React.forwardRef<
   <tfoot
     ref={ref}
     className={cn(
-      "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
+      "border-t bg-muted/20 font-medium [&>tr]:last:border-b-0",
       className
     )}
     {...props}
@@ -58,7 +61,8 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+      "border-b transition-colors hover:bg-muted/20 data-[state=selected]:bg-muted/40",
+      "even:bg-muted/5", // Zebra striping untuk readability
       className
     )}
     {...props}
@@ -73,7 +77,11 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-10 px-2 text-center border-x bg-chart-3 align-middle font-medium text-background [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      "h-12 px-4 text-left align-middle font-semibold text-foreground",
+      "border-r border-border last:border-r-0",
+      "bg-muted/40 hover:bg-muted/60 transition-colors",
+      "[&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      "group cursor-default", // Untuk potential sorting indicators
       className
     )}
     {...props}
@@ -88,7 +96,11 @@ const TableCell = React.forwardRef<
   <td
     ref={ref}
     className={cn(
-      "p-1 pl-3 align-middle border [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      "p-4 align-middle text-foreground/90",
+      "border-r border-border/50 last:border-r-0",
+      "transition-colors duration-150",
+      "[&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      "group-hover:bg-muted/10", // Interactivity pada row hover
       className
     )}
     {...props}
@@ -102,7 +114,11 @@ const TableCaption = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <caption
     ref={ref}
-    className={cn("mt-4 text-sm text-muted-foreground", className)}
+    className={cn(
+      "mt-2 text-sm text-muted-foreground/80 font-medium",
+      "px-4 py-2 bg-muted/20 rounded-t-lg border-b border-border",
+      className
+    )}
     {...props}
   />
 ))

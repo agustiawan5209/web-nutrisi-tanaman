@@ -75,10 +75,10 @@ export default function RiwayatNutrisiTanamanPage({ riwayat, breadcrumb, titlePa
                             <div className="mt-4 space-y-3">
                                 <div className="flex justify-between">
                                     <span className="text-base text-gray-600">Jenis Tanaman</span>
-                                    <span className="text-base font-medium">{riwayat.jenis_tanaman} Ha</span>
+                                    <span className="text-base font-medium">{riwayat.jenis_tanaman}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-base text-gray-600">Label (Nutrisi)</span>
+                                    <span className="text-base text-gray-600">Hasil Rekomendasi</span>
                                     <span className="text-base font-medium">{riwayat.label}</span>
                                 </div>
                             </div>
@@ -86,7 +86,7 @@ export default function RiwayatNutrisiTanamanPage({ riwayat, breadcrumb, titlePa
 
                         {/* Water Quality */}
                         <div className="overflow-hidden border-l-4 border-chart-4 bg-white p-6 shadow-md">
-                            <h3 className="text-sm font-medium text-gray-500">Detail Tanaman</h3>
+                            <h3 className="text-sm font-medium text-gray-500">Parameter Rekomendasi Tanaman</h3>
                             <div className="mt-4 space-y-3">
                                 {kriteria.map((item :any, index: number) => (
                                     <div key={index} className="flex justify-between border-b-2">

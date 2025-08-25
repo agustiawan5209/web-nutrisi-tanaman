@@ -132,7 +132,7 @@ export default function EditDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
                             </Select>
                             {errors.jenis_tanaman && <InputError message={errors.jenis_tanaman} className="mt-2" />}
                         </div>
-                        <div>
+                        {/* <div>
                             <Label className="text-xs text-gray-600">Label</Label>
                             <Select value={data.label} required onValueChange={(value) => handleSelectChange('label', value)}>
                                 <SelectTrigger className="input-minimal">
@@ -147,7 +147,7 @@ export default function EditDatasetView({ breadcrumb, kriteria, jenisTanaman, ti
                                 </SelectContent>
                             </Select>
                             {errors.label && <InputError message={errors.label} className="mt-2" />}
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Parameter Lingkungan */}

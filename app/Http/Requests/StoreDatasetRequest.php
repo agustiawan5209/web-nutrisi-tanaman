@@ -23,7 +23,7 @@ class StoreDatasetRequest extends FormRequest
     {
         return [
             'jenis_tanaman'=> 'required|string|max:50|exists:jenis_tanamen,nama',
-            'label'=> 'required|string|max:50',
+            'label'=> 'nullable|string|max:50',
             'attribut'=> 'required',
         ];
     }

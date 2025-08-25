@@ -45,36 +45,72 @@ class KlasifikasiController extends Controller
         ]);
     }
 
-    private function getData()
-    {
-        // Logic to retrieve data for the Random Forest model
 
+    public function getData()
+    {
         $data = [];
-        $dataset = Dataset::with(['detail', 'detail.kriteria'])->orderBy('id', 'desc')->get();
-        $kriteria = Kriteria::select('nama')->orderBy('id', 'asc')->get()->pluck('nama')->toArray();
+        $transactionY = [];
+
+        // Ambil dataset dengan detail dan kriteria
+        $dataset = Dataset::with(['detail', 'detail.kriteria'])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        // Ambil kriteria untuk training
+        $kriteria_X = Kriteria::select('nama')
+            ->where(function ($query) {
+                $query->where('nama', 'LIKE', '%gejala%')
+                    ->orWhere('nama', 'LIKE', '%umur%')
+                    ->orWhere('nama', 'LIKE', '%luas lahan%')
+                    ->orWhere('nama', 'LIKE', '%jenis%');
+            })
+            ->orderBy('id', 'asc')
+            ->pluck('nama')
+            ->toArray();
+
+        // Ambil semua gejala sekali, buat mapping [nama => id]
+        $gejalaMap = Gejala::pluck('id', 'nama')->toArray();
+
+        // Daftar kriteria khusus
+        $specialKriteria = ['gejala', 'umur panen', 'luas lahan(m²)'];
+
+        // Mapping nama kriteria → alias
+        $aliasMap = [
+            'ph air' => 'ph',
+            'part per million (ppm)' => 'ppm',
+            'ketinggian air' => 'ketinggianAir',
+        ];
+
         foreach ($dataset as $row) {
             $attribut = [];
+            $attributY = [];
             foreach ($row->detail as $key => $detail) {
-                if ($key === 3 || $detail->kriteria_id == 4 || $detail->kriteria->nama === "gejala") {
-                  $gejala = Gejala::where('nama', 'like', '%' . $detail->nilai . '%')->first();
-                   if($gejala){
-                     $attribut[$key] = $gejala->id;
-                   }else{
-                     $attribut[$key] = 0;
-                   }
+                $namaKriteria = strtolower($detail->kriteria->nama);
+
+                if (in_array($detail->kriteria->nama, $specialKriteria, true)) {
+                    // Khusus gejala atau umur panen atau luas lahan
+                    if ($key === 3 || $detail->kriteria_id == 4 || $namaKriteria === "gejala") {
+                        $gejalaId = $gejalaMap[$detail->nilai] ?? 0;
+                        $attribut[$key] = $gejalaId;
+                    } else {
+                        $attribut[$key] = (int) $detail->nilai;
+                    }
                 } else {
-                    $attribut[$key] = intval($detail->nilai);
+                    // Gunakan alias jika ada
+                    $name = $aliasMap[$namaKriteria] ?? $namaKriteria;
+                    $attributY[$name] = (int) $detail->nilai;
                 }
             }
+            $transactionY[] = $attributY;
             $data[] = array_merge($attribut, [
                 JenisTanaman::where('nama', $row->jenis_tanaman)->first()->id,
-                $row->label,
             ]);
         }
         // dd($data);
         return [
             'training' => array_values($data),
-            'kriteria' => array_merge($kriteria, ["jenis_tanaman", 'label']),
+            'kriteria' => $kriteria_X,
+            'transactionY' => $transactionY,
         ];
     }
 }

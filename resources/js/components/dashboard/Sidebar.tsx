@@ -16,7 +16,7 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ className, collapsed = false, onToggleCollapse }: SidebarProps) => {
-    const {auth} = usePage<SharedData>().props
+    const { auth } = usePage<SharedData>().props
     const [isCollapsed, setIsCollapsed] = useState(collapsed);
     const activeSection = usePage().url.split('/').pop() || 'Dashboard';
     // console.log('Active Section:', activeSection);
@@ -31,16 +31,20 @@ const Sidebar = ({ className, collapsed = false, onToggleCollapse }: SidebarProp
 
     const navItems = [
         { name: 'Dashboard', icon: <Home size={20} />, href: route('dashboard'), active: 'dashboard' },
-        { name: 'Kriteria', icon: <BarChart2Icon size={20} />, href: route('admin.kriteria.index'), active: 'kriterias' },
-        { name: 'Label', icon: <BarChart2Icon size={20} />, href: route('admin.label.index'), active: 'label' },
+
         { name: 'jenis Tanaman', icon: <LeafyGreen size={20} />, href: route('admin.jenisTanaman.index'), active: 'jenis-tanaman' },
         { name: 'Training Tanaman', icon: <FolderClockIcon size={20} />, href: route('admin.dataset.index'), active: 'dataset' },
         { name: 'Random Forest', icon: <GalleryHorizontal size={20} />, href: route('randomForest.index'), active: 'random-forest' },
         { name: 'Riwayat Klasifikasi', icon: <FolderClockIcon size={20} />, href: route('admin.riwayat.index'), active: 'riwayat-forest' },
     ];
 
-    if(auth.role == 'super_admin'){
-        navItems.push({ name: 'Gejala', icon: <Home size={20} />, href: route('admin.gejala.index'), active: 'gejalas' })
+    if (auth.role == 'super_admin') {
+
+        navItems.push(
+            { name: 'Kriteria', icon: <BarChart2Icon size={20} />, href: route('admin.kriteria.index'), active: 'kriterias' },
+            { name: 'Label', icon: <BarChart2Icon size={20} />, href: route('admin.label.index'), active: 'label' },
+            { name: 'Gejala', icon: <Home size={20} />, href: route('admin.gejala.index'), active: 'gejalas' }
+        )
     }
 
     return (
