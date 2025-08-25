@@ -1,4 +1,4 @@
-import FormClassifier from '@/components/form-classifier';
+import FormClassifier from '@/components/form-prediction';
 import { Button } from '@/components/ui/button';
 import MainLayout from '@/layouts/guest/main-layout';
 import { GejalaTypes, JenisTanamanTypes, KriteriaTypes, LabelTypes } from '@/types';
@@ -10,8 +10,16 @@ interface RandomForestViewProps {
     jenisTanaman?: JenisTanamanTypes[];
     opsiLabel: LabelTypes[];
     opsiGejala: GejalaTypes[];
+     dataTraining: {
+        training: string[][];
+        kriteria: string[];
+    };
 }
-export default function KlasifikasiView({ titlePage, kriteria, jenisTanaman, opsiLabel, opsiGejala }: RandomForestViewProps) {
+export default function KlasifikasiView({ titlePage, kriteria, jenisTanaman, opsiLabel, opsiGejala, dataTraining }: RandomForestViewProps) {
+    // console.log(dataTraining)
+    const training = dataTraining.training[0]
+    const attribut = dataTraining.kriteria.filter((item) => item.toLowerCase() != 'label')
+    console.log(training)
     return (
         <>
             <MainLayout>
@@ -28,7 +36,7 @@ export default function KlasifikasiView({ titlePage, kriteria, jenisTanaman, ops
                                     <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">Klasifikasi Tanaman</h2>
                                     <p className="mt-1 text-gray-500 dark:text-gray-300">Masukkan kriteria untuk mendapatkan klasifikasi tanaman</p>
                                 </div>
-                                <FormClassifier kriteria={kriteria} jenisTanaman={jenisTanaman} opsiLabel={opsiLabel} opsiGejala={opsiGejala} />
+                                <FormClassifier kriteria={dataTraining.kriteria} dataTraining={training} jenisTanaman={jenisTanaman} opsiLabel={opsiLabel} opsiGejala={opsiGejala} />
                             </div>
                         </div>
                     </div>
