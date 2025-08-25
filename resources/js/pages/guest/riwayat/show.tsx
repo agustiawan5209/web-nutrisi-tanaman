@@ -62,7 +62,7 @@ export default function RiwayatNutrisiTanamanPage({ riwayat, breadcrumb, titlePa
                             <div className="mt-4 space-y-3">
                                 <div className="flex justify-between">
                                     <span className="text-base text-gray-600">Nama Penguna</span>
-                                    <span className="text-base font-medium">{user.name} Ha</span>
+                                    <span className="text-base font-medium">{user.name} </span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-base text-gray-600">Email</span>

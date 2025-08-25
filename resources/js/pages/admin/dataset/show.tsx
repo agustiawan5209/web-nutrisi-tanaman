@@ -52,7 +52,7 @@ export default function HarvestDetailPage({ dataset, breadcrumb, titlePage }: Ha
                             <div className="mt-4 space-y-3">
                                 <div className="flex justify-between">
                                     <span className="text-base text-gray-600">Jenis Tanaman</span>
-                                    <span className="text-base font-medium">{data.jenis_tanaman} Ha</span>
+                                    <span className="text-base font-medium">{data.jenis_tanaman} </span>
                                 </div>
                             </div>
                         </div>
