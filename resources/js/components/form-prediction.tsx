@@ -155,7 +155,7 @@ export default function FormPrediction({ models, normalizationParams, transactio
                 jenisTanaman: jenis,
                 prediksi: predik
             });
-            if (auth.user) {
+            if (auth.user && auth.role == 'user') {
                 saveRiwayatUser({ jenisTanaman: jenis, prediksi: predik });
             }
             setMetrics(newMetrics);
