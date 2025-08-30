@@ -189,7 +189,7 @@ export default function FormPrediction({
                         label: labelData.nama,
                     },
                 });
-                if (auth.user) {
+                if (auth.user && auth.role == 'user') {
                     saveRiwayatUser({
                         jenisTanaman: jenis,
                         prediksi: {
