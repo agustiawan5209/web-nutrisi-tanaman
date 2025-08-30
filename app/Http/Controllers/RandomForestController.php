@@ -103,6 +103,8 @@ class RandomForestController extends Controller
                     // Gunakan alias jika ada
                     $name = $aliasMap[$namaKriteria] ?? $namaKriteria;
                     $attributY[$name] = (int) $detail->nilai;
+                    $attributY['label'] = Label::where('nama', '=', $row->label)->first()->id;
+
                 }
             }
             $transactionY[] = $attributY;
@@ -165,5 +167,12 @@ class RandomForestController extends Controller
         'indikator' => $model->indikator,
         'model_json' => $model->model_json,
     ], 200);
+}
+ public function getLabel($label)
+{
+    $model = Label::find($label);
+
+
+    return response()->json($model, 200);
 }
 }

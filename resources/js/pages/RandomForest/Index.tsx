@@ -24,6 +24,7 @@ interface RandomForestViewProps {
             ph: number;
             ppm: number;
             ketinggianAir: number;
+            label: number;
         }[]
     };
     breadcrumb?: BreadcrumbItem[];
@@ -53,6 +54,7 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
         ph: null as RandomForestRegression | null,
         ppm: null as RandomForestRegression | null,
         ketinggianAir: null as RandomForestRegression | null,
+        label: null as RandomForestRegression | null,
     });
 
     const [normalizationParams, setNormalizationParams] = useState<any>(null);
@@ -63,6 +65,7 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
             ph: RandomForestRegression;
             ppm: RandomForestRegression;
             ketinggianAir: RandomForestRegression;
+            label: RandomForestRegression;
         },
         params: any,
     ) => {
@@ -79,18 +82,22 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
                     { indikator: indikator0, model: phModel },
                     { indikator: indikator1, model: ppmModel },
                     { indikator: indikator2, model: ketinggianAirModel },
+                    { indikator: indikator3, model: labelModel },
                 ] = await Promise.all([
                     loadModelFromDB('ph'),
                     loadModelFromDB('ppm'),
                     loadModelFromDB('ketinggianAir'),
+                    loadModelFromDB('label'),
                 ]);
-                // console.log(indikator0)
+
+                // console.log(labelModel)
                 setIndikatorData(indikator0);
 
                 setModels({
                     ph: phModel,
                     ppm: ppmModel,
                     ketinggianAir: ketinggianAirModel,
+                    label: labelModel,
                 });
 
 
@@ -231,6 +238,7 @@ export default function RandomForestView({ dataTraining, breadcrumb, titlePage, 
                             ph: dataTraining.transactionY.map((p) => p.ph),
                             ppm: dataTraining.transactionY.map((p) => p.ppm),
                             ketinggianAir: dataTraining.transactionY.map((p) => p.ketinggianAir),
+                            label: dataTraining.transactionY.map((p) => p.label),
                         }}
                     />
                 )}

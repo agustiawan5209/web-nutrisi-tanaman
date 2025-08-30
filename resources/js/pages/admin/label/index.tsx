@@ -193,6 +193,7 @@ export default function LabelIndex({ label, breadcrumb, titlePage, can }: LabelI
                                     name="nama"
                                     className="input"
                                     disabled={processing}
+                                    readOnly={can?.add && can.delete}
                                     placeholder="Masukkan nama label"
                                 />
                                 <InputError message={errors.nama} className="mt-2" />

@@ -44,7 +44,6 @@ export async function loadModelFromDB(
     try {
         // 1. Fetch model data from Laravel backend
         const response = await axios.get(route('randomForest.getModel', { modelName: modelName }));
-
         // 2. Validasi: Cek jika response mengandung error (dari PHP)
         if (response.data.error) {
             throw new Error(response.data.message || `Model ${modelName} tidak ditemukan`);
@@ -59,6 +58,7 @@ export async function loadModelFromDB(
 
         // 4. Reconstruct the model from JSON
         const model = RandomForestRegression.load(model_json);
+        // console.log(modelName,indikator, model)
 
         // 5. Return both the model and normalization parameters
         return { indikator, model };

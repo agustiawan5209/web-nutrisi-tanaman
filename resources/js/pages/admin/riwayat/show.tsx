@@ -35,7 +35,26 @@ export default function RiwayatNutrisiTanamanPage({ riwayat, breadcrumb, titlePa
         () => (breadcrumb ? breadcrumb.map((item) => ({ title: item.title, href: item.href })) : []),
         [breadcrumb],
     );
-    console.log(riwayat)
+  const labelParse = (value : string)=>{
+        const label = JSON.parse(value);
+
+        return (<table>
+            <tbody>
+                <tr>
+                    <th className="border p-2 text-xs">PH</th>
+                    <th className="border p-2 text-xs">PPM</th>
+                    <th className="border p-2 text-xs">Ketinggian Air</th>
+                    <th className="border p-2 text-xs">Label</th>
+                </tr>
+                <tr>
+                    <td className="border p-2 text-center">{label?.ph?.toFixed(2)}</td>
+                    <td className="border p-2 text-center">{label?.ppm?.toFixed(2)}</td>
+                    <td className="border p-2 text-center">{label?.ketinggianAir?.toFixed(2)}</td>
+                    <td className="border p-2 text-center">{label?.label}</td>
+                </tr>
+            </tbody>
+        </table>)
+    }
     const attribut : any = JSON.parse(riwayat.attribut)
     const user : any = JSON.parse(riwayat.user)
     const kriteria : any = JSON.parse(riwayat.kriteria)
@@ -70,16 +89,17 @@ export default function RiwayatNutrisiTanamanPage({ riwayat, breadcrumb, titlePa
                                 </div>
                             </div>
                         </div>
-                         <div className="overflow-hidden border-b-4 border-l-4 border-primary bg-white p-6 shadow-md">
+                       <div className="overflow-hidden border-b-4 border-l-4 border-primary bg-white p-6 shadow-md">
                             <h3 className="text-lg font-medium text-gray-500">Data Kelas</h3>
                             <div className="mt-4 space-y-3">
                                 <div className="flex justify-between">
                                     <span className="text-base text-gray-600">Jenis Tanaman</span>
-                                    <span className="text-base font-medium">{riwayat.jenis_tanaman}</span>
+                                    <span className="text-base font-medium">
+                                         <p dangerouslySetInnerHTML={{__html: riwayat.jenis_tanaman}} />
+                                    </span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-base text-gray-600">Hasil Rekomendasi</span>
-                                    <span className="text-base font-medium">{riwayat.label}</span>
+                                    <div className="text-base font-medium">{labelParse(riwayat.label)}</div>
                                 </div>
                             </div>
                         </div>

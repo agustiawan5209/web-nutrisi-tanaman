@@ -32,7 +32,7 @@ class RiwayatKlasifikasiController extends Controller
     public function index()
     {
         // Handle the request to display the Random Forest model index page
-        $data = RiwayatKlasifikasi::where('user_id', '=', Auth::user()->id)->orderBy('created_at', 'desc')->paginate(10);
+        $data = RiwayatKlasifikasi::where('user_id', '=', Auth::user()->id)->orderBy('id', 'desc')->paginate(10);
         //   dd($data);
         return Inertia::render('guest/riwayat/index', [
             'riwayat' => $data,

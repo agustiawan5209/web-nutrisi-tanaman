@@ -111,13 +111,13 @@ class RiwayatKlasifikasiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(RiwayatKlasifikasi $riwayatKlasifikasi)
+    public function destroy(RiwayatKlasifikasi $riwayat)
     {
         $databaseHelper = App::make('databaseHelper');
         return $databaseHelper(
-            operation: fn() => $riwayatKlasifikasi->delete(),
+            operation: fn() => $riwayat->delete(),
             successMessage: 'Kategori Berhasil Di Hapus!',
-            redirectRoute: 'admin.klasifikasi.index'
+            redirectRoute: 'admin.riwayat.index'
         );
     }
 }

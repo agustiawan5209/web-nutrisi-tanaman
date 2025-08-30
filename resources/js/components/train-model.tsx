@@ -13,12 +13,14 @@ interface TrainModelsProps {
         ph: number;
         ppm: number;
         ketinggianAir: number;
+        label: number;
     }[];
     onModelsTrained: (
         models: {
             ph: RandomForestRegression;
             ppm: RandomForestRegression;
             ketinggianAir: RandomForestRegression;
+            label: RandomForestRegression;
         },
         normalizationParams: any,
     ) => void;
@@ -33,6 +35,7 @@ export default function TrainModels({ indikator, transactionX, transactionY, onM
         ph: 0,
         ppm: 0,
         ketinggianAir: 0,
+        label: 0,
     });
 
     const initModel = () => {
@@ -77,6 +80,7 @@ export default function TrainModels({ indikator, transactionX, transactionY, onM
                 ph: initModel(),
                 ppm: initModel(),
                 ketinggianAir: initModel(),
+                label: initModel(),
             };
 
             // 4. Fungsi training dengan error handling yang lebih spesifik
@@ -99,10 +103,11 @@ export default function TrainModels({ indikator, transactionX, transactionY, onM
             };
 
             // 5. Training model
-            const [phModel, ppmModel, ketinggianAirModel] = await Promise.all([
+            const [phModel, ppmModel, ketinggianAirModel, labelModel] = await Promise.all([
                 trainSingleModel(models.ph, 'ph'),
                 trainSingleModel(models.ppm, 'ppm'),
                 trainSingleModel(models.ketinggianAir, 'ketinggianAir'),
+                trainSingleModel(models.label, 'label'),
             ]);
 
             // 6. Simpan model
@@ -111,6 +116,7 @@ export default function TrainModels({ indikator, transactionX, transactionY, onM
                     saveModelToDB(phModel, 'ph', indikator),
                     saveModelToDB(ppmModel, 'ppm', indikator),
                     saveModelToDB(ketinggianAirModel, 'ketinggianAir', indikator),
+                    saveModelToDB(labelModel, 'label', indikator),
                 ]);
                 setErrorModel({
                     title: "Berhasil",

@@ -84,6 +84,7 @@ Route::middleware(['auth', 'verified', 'role:admin|super_admin'])->group(functio
             Route::controller(RiwayatKlasifikasiController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::get('/{riwayat}/show', 'show')->name('show');
+                Route::delete('/{riwayat}/destroy', 'destroy')->name('destroy');
             });
         });
     });
@@ -102,3 +103,4 @@ require __DIR__ . '/auth.php';
 
 Route::post('/random-forest/store', [RandomForestController::class, 'store'])->name('randomForest.store');
 Route::get('/random-forest/get-model/{modelName}', [RandomForestController::class, 'getModel'])->name('randomForest.getModel');
+Route::get('/random-forest/get-label/{label}', [RandomForestController::class, 'getLabel'])->name('randomForest.getLabel');

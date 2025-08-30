@@ -57,7 +57,26 @@ export default function IndikatorIndex({ riwayat, breadcrumb, titlePage }: Indik
             year: 'numeric',    // 2025
         });
     }
-    console.log(riwayat);
+    const labelParse = (value : string)=>{
+        const label = JSON.parse(value);
+
+        return (<table>
+            <tbody>
+                <tr>
+                    <th className="border p-2 text-xs">PH</th>
+                    <th className="border p-2 text-xs">PPM</th>
+                    <th className="border p-2 text-xs">Ketinggian Air</th>
+                    <th className="border p-2 text-xs">Label</th>
+                </tr>
+                <tr>
+                    <td className="border p-2 text-center">{label?.ph?.toFixed(2)}</td>
+                    <td className="border p-2 text-center">{label?.ppm?.toFixed(2)}</td>
+                    <td className="border p-2 text-center">{label?.ketinggianAir?.toFixed(2)}</td>
+                    <td className="border p-2 text-center">{label?.label}</td>
+                </tr>
+            </tbody>
+        </table>)
+    }
     return (
         <UserAuthLayout >
             <Head title={titlePage ?? 'Indikator'} />
@@ -88,8 +107,10 @@ export default function IndikatorIndex({ riwayat, breadcrumb, titlePage }: Indik
                                             <TableCell>{index + 1}</TableCell>
                                             <TableCell>{formatDate(item.created_at)}</TableCell>
                                             <TableCell>{JSON.parse(item.user).name}</TableCell>
-                                            <TableCell>{item.jenis_tanaman}</TableCell>
-                                            <TableCell>{item.label}</TableCell>
+                                            <TableCell>
+                                                <p dangerouslySetInnerHTML={{__html: item.jenis_tanaman}} />
+                                            </TableCell>
+                                            <TableCell>{labelParse(item.label)}</TableCell>
                                             <TableCell>
                                                 <div className="flex flex-row items-center gap-2">
                                                     <Link href={route('guest.riwayat.show', { riwayat: item.id })}>

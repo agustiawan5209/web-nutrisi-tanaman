@@ -29,7 +29,7 @@ export default function LandingPage() {
     ];
 
     return (
-        <MainLayout >
+        <MainLayout>
             {/* Hero Section */}
             <section className="px-4 py-20">
                 <div className="container mx-auto text-center">
@@ -56,31 +56,45 @@ export default function LandingPage() {
                 <div className="container mx-auto">
                     <div className="grid items-center gap-12 md:grid-cols-2">
                         <div>
-                            <h2 className="mb-6 text-3xl font-bold text-gray-900">Mengapa Nutrisi Penting dalam Hidroponik?</h2>
+                            <h2 className="mb-6 text-3xl font-bold text-gray-900">Parameter Penting dalam Sistem Hidroponik</h2>
                             <p className="mb-6 leading-relaxed text-gray-600">
-                                Dalam sistem hidroponik, tanaman bergantung sepenuhnya pada larutan nutrisi yang diberikan. Keseimbangan nutrisi yang
-                                tepat adalah kunci keberhasilan pertumbuhan tanaman yang optimal.
+                                Keberhasilan budidaya hidroponik bergantung pada pengelolaan parameter yang tepat. Monitoring yang cermat terhadap
+                                kondisi lingkungan sangat menentukan kesehatan tanaman dan hasil panen.
                             </p>
                             <div className="space-y-4">
                                 <div className="flex items-start space-x-3">
                                     <CheckCircle className="mt-1 h-6 w-6 flex-shrink-0 text-green-600" />
                                     <div>
-                                        <h3 className="font-semibold text-gray-900">Kontrol Presisi</h3>
-                                        <p className="text-gray-600">Mengatur komposisi nutrisi dengan akurasi tinggi</p>
+                                        <h3 className="font-semibold text-gray-900">pH Air (5.5 - 6.5)</h3>
+                                        <p className="text-gray-600">Memastikan tingkat keasaman optimal untuk penyerapan nutrisi</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start space-x-3">
                                     <CheckCircle className="mt-1 h-6 w-6 flex-shrink-0 text-green-600" />
                                     <div>
-                                        <h3 className="font-semibold text-gray-900">Efisiensi Maksimal</h3>
-                                        <p className="text-gray-600">Mengurangi pemborosan dan meningkatkan hasil panen</p>
+                                        <h3 className="font-semibold text-gray-900">PPM (500-1500)</h3>
+                                        <p className="text-gray-600">Mengukur konsentrasi nutrisi dalam larutan untuk pertumbuhan optimal</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start space-x-3">
                                     <CheckCircle className="mt-1 h-6 w-6 flex-shrink-0 text-green-600" />
                                     <div>
-                                        <h3 className="font-semibold text-gray-900">Kualitas Terjamin</h3>
-                                        <p className="text-gray-600">Menghasilkan tanaman dengan kualitas dan nutrisi terbaik</p>
+                                        <h3 className="font-semibold text-gray-900">Ketinggian Air</h3>
+                                        <p className="text-gray-600">Mengatur level air sesuai sistem dan fase pertumbuhan tanaman</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start space-x-3">
+                                    <CheckCircle className="mt-1 h-6 w-6 flex-shrink-0 text-green-600" />
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900">Monitoring Gejala</h3>
+                                        <p className="text-gray-600">Mendeteksi dini gejala kekurangan nutrisi atau penyakit</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start space-x-3">
+                                    <CheckCircle className="mt-1 h-6 w-6 flex-shrink-0 text-green-600" />
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900">Umur Panen</h3>
+                                        <p className="text-gray-600">Menentukan waktu panen optimal berdasarkan jenis tanaman</p>
                                     </div>
                                 </div>
                             </div>
@@ -88,17 +102,17 @@ export default function LandingPage() {
                         <div className="relative">
                             <div className="rounded-2xl bg-gradient-to-br from-green-400 to-blue-500 p-8 text-white">
                                 <Droplets className="mb-4 h-16 w-16 opacity-80" />
-                                <h3 className="mb-4 text-2xl font-bold">Nutrisi Optimal</h3>
+                                <h3 className="mb-4 text-2xl font-bold">Kontrol Parameter Kunci</h3>
                                 <p className="text-green-100">
-                                    Sistem kami memastikan setiap tanaman mendapatkan nutrisi yang tepat pada waktu yang tepat, menghasilkan
-                                    pertumbuhan yang sehat dan produktivitas maksimal.
+                                    Sistem kami memonitor secara real-time parameter kritikal hidroponik: pH air, tingkat PPM, ketinggian air, gejala
+                                    tanaman, dan prediksi umur panen. Dengan teknologi canggih, tanaman mendapatkan kondisi optimal untuk pertumbuhan
+                                    maksimal dan hasil panen yang berkualitas.
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-
             {/* How AI Works */}
             <section id="how-it-works" className="px-4 py-16">
                 <div className="container mx-auto">

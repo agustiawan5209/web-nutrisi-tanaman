@@ -24,7 +24,7 @@ class StoreRiwayatKlasifikasiRequest extends FormRequest
         return [
             "user_id"=> "required",
             "user"=> "required",
-            "label"=> "required|string|max:250",
+            "label"=> "required",
             "jenis_tanaman"=> "required|string|max:255",
             "attribut"=> "required",
             "kriteria"=> "required",

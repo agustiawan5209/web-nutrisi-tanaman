@@ -31,7 +31,7 @@ const Sidebar = ({ className, collapsed = false, onToggleCollapse }: SidebarProp
 
     const navItems = [
         { name: 'Dashboard', icon: <Home size={20} />, href: route('dashboard'), active: 'dashboard' },
-
+{ name: 'Label', icon: <BarChart2Icon size={20} />, href: route('admin.label.index'), active: 'label' },
         { name: 'jenis Tanaman', icon: <LeafyGreen size={20} />, href: route('admin.jenisTanaman.index'), active: 'jenis-tanaman' },
         { name: 'Training Tanaman', icon: <FolderClockIcon size={20} />, href: route('admin.dataset.index'), active: 'dataset' },
         { name: 'Random Forest', icon: <GalleryHorizontal size={20} />, href: route('randomForest.index'), active: 'random-forest' },
@@ -42,7 +42,7 @@ const Sidebar = ({ className, collapsed = false, onToggleCollapse }: SidebarProp
 
         navItems.push(
             { name: 'Kriteria', icon: <BarChart2Icon size={20} />, href: route('admin.kriteria.index'), active: 'kriterias' },
-            { name: 'Label', icon: <BarChart2Icon size={20} />, href: route('admin.label.index'), active: 'label' },
+
             { name: 'Gejala', icon: <Home size={20} />, href: route('admin.gejala.index'), active: 'gejalas' }
         )
     }

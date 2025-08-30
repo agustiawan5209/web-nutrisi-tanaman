@@ -9,24 +9,23 @@ use App\Models\Dataset;
 use App\Models\Kriteria;
 use App\Models\JenisTanaman;
 use Illuminate\Http\Request;
+use App\Models\RiwayatKlasifikasi;
 use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // dd(Label::all());
-        $label = Label::select('nama')->orderBy('id', 'asc')->get()->pluck('nama')->toArray();
+         $label = Label::select('nama')->orderBy('id', 'asc')->get()->pluck('nama')->toArray();
 
         $data = $this->getData();
         $training = collect($data['training']);
         $kriteria = $data['kriteria'];
-        $distributionLabel = $this->setDistribusiLabel($training, $label);
-        $meanKriteriaValue = $this->meanKriteriaValue($distributionLabel, "Sangat Baik", $kriteria);
         return Inertia::render("guest/dashboard", [
-            "distributionLabel" => $distributionLabel,
-            "meanKriteriaValue" => $meanKriteriaValue,
-            "label" => Label::all(),
+            "jenisTanaman" => JenisTanaman::all()->count(),
+            "kriteria" => Kriteria::all()->count(),
+            "dataset" => Dataset::all()->count(),
+            "riwayat" => RiwayatKlasifikasi::all()->count(),
         ]);
     }
 

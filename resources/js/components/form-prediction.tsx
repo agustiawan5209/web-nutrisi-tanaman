@@ -1,17 +1,16 @@
 // components/predict-models.tsx
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { GejalaTypes, JenisTanamanTypes, KriteriaTypes, SharedData } from '@/types';
-import { savePredictionToDB } from '@/utils/modelStorage';
-import { useForm, usePage } from '@inertiajs/react';
-import { RandomForestRegression } from 'ml-random-forest';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
+import { GejalaTypes, JenisTanamanTypes, KriteriaTypes, LabelTypes, SharedData } from '@/types';
+import { useForm, usePage } from '@inertiajs/react';
 import axios from 'axios';
-import { useState } from 'react';
-import { Toast } from './ui/toast';
+import { RandomForestRegression } from 'ml-random-forest';
+import React, { useState } from 'react';
 import InputError from './input-error';
+import { Toast } from './ui/toast';
 export interface ParameterTransaction {
     indikator_id: number;
     nilai: string | null;
@@ -21,6 +20,7 @@ interface PredictModelsProps {
         ph: RandomForestRegression | null;
         ppm: RandomForestRegression | null;
         ketinggianAir: RandomForestRegression | null;
+        label: RandomForestRegression | null;
     };
     normalizationParams: any;
     transactionX: any;
@@ -29,6 +29,7 @@ interface PredictModelsProps {
         ph: number[];
         ppm: number[];
         ketinggianAir: number[];
+        label: number[];
     };
     className?: string;
     opsiGejala: GejalaTypes[];
@@ -39,25 +40,53 @@ type Dataset = {
     label: string;
     attribut: string[];
 };
-export default function FormPrediction({ models, normalizationParams, transactionX, indikator, actualData, className, opsiGejala, jenisTanaman }: PredictModelsProps) {
+export default function FormPrediction({
+    models,
+    indikator,
+    className,
+    opsiGejala,
+    jenisTanaman,
+}: PredictModelsProps) {
     const { auth } = usePage<SharedData>().props;
     const [errorModel, setErrorModel] = useState<{ text: string; status: boolean }>({ text: '', status: false });
     const [isErrorModel, setIsErrorModel] = useState<boolean>(false);
 
+    const findLabel = async (value: number) => {
+        try {
+            const response: { status: number; data: LabelTypes } = await axios.get(
+                route('randomForest.getLabel', { label: Number(value).toFixed(0) }),
+            );
+            if (response.status == 200) {
+                return response.data;
+            }
+        } catch (err) {
+            console.log(err);
+            return '';
+        }
+    };
     const { data, setData, errors } = useForm<Dataset>({
         jenis_tanaman: '',
         label: '',
         attribut: indikator.map(() => ''),
     });
-    const [predictions, setPredictions] = useState({
-        jenisTanaman: null as string | null,
-        prediksi: null as string | null,
+    const [predictions, setPredictions] = useState<{
+        jenisTanaman: string | null;
+        prediksi: {
+            ph: number | null;
+            ppm: number | null;
+            ketinggianAir: number | null;
+            label: string | null;
+        } | null;
+    }>({
+        jenisTanaman: null,
+        prediksi: null,
     });
 
     const [metrics, setMetrics] = useState({
         ph: { mse: null as number | null, r2: null as number | null },
         ppm: { mse: null as number | null, r2: null as number | null },
         ketinggianAir: { mse: null as number | null, r2: null as number | null },
+        label: { mse: null as number | null, r2: null as number | null },
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -101,7 +130,7 @@ export default function FormPrediction({ models, normalizationParams, transactio
 
     const makePrediction = (model: RandomForestRegression, normalizedInput: number[]): any => {
         const inputTensor = [normalizedInput];
-        const predictionTensor = model.predict(inputTensor)
+        const predictionTensor = model.predict(inputTensor);
         return predictionTensor[0];
     };
     /**
@@ -114,15 +143,16 @@ export default function FormPrediction({ models, normalizationParams, transactio
      *
      * @returns void
      */
-    const predictAll = (e: React.FormEvent) => {
+    const predictAll = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!models) return;
 
-        const newPredictions :{
-            ph: number| null;
-            ppm: number| null;
-            ketinggianAir: number| null;
-        } = { ph: null, ppm: null, ketinggianAir: null };
+        const newPredictions: {
+            ph: number | null;
+            ppm: number | null;
+            ketinggianAir: number | null;
+            label: number | null;
+        } = { ph: null, ppm: null, ketinggianAir: null, label: null };
         const newMetrics = { ...metrics };
 
         // Initialize empty array for each model key
@@ -141,41 +171,62 @@ export default function FormPrediction({ models, normalizationParams, transactio
 
                 // Initialize the inputArr object outside forEach
 
-                const prediction = makePrediction(
-                    model,
-                    inputArr,
-                );
+                const prediction = makePrediction(model, inputArr);
                 newPredictions[key as keyof typeof newPredictions] = prediction;
             });
 
-            console.log(newPredictions)
-            const jenis = `Rekomendasi nutris Tanaman : ${data.jenis_tanaman}`;
-            const predik = `pH air : ${newPredictions.ph?.toFixed(2)}, PPM : ${newPredictions.ppm?.toFixed(2)}, Ketinggian Air: ${newPredictions.ketinggianAir?.toFixed(2)}`;
-            setPredictions({
-                jenisTanaman: jenis,
-                prediksi: predik
-            });
-            if (auth.user && auth.role == 'user') {
-                saveRiwayatUser({ jenisTanaman: jenis, prediksi: predik });
+            console.log(newPredictions);
+            if (newPredictions.label) {
+                const labelData: LabelTypes = await findLabel(newPredictions.label);
+                const jenis = `Keterangan : Nutrisi ${labelData.nama}. <br/> Saran: ${labelData.deskripsi}`;
+
+                setPredictions({
+                    jenisTanaman: jenis,
+                    prediksi: {
+                        ph: newPredictions.ph,
+                        ppm: newPredictions.ppm,
+                        ketinggianAir: newPredictions.ketinggianAir,
+                        label: labelData.nama,
+                    },
+                });
+                if (auth.user) {
+                    saveRiwayatUser({
+                        jenisTanaman: jenis,
+                        prediksi: {
+                            ph: newPredictions.ph,
+                            ppm: newPredictions.ppm,
+                            ketinggianAir: newPredictions.ketinggianAir,
+                            label: labelData.nama,
+                        },
+                    });
+                }
             }
             setMetrics(newMetrics);
         } catch (error) {
-            console.log(error)
+            console.log(error);
             setErrorModel({
                 text: 'Gagal Melakukan prediksi, ini mungkin kesalahan akibat train model yang salah. mohon ulangi sekali lagi',
                 status: true,
             });
-            setIsErrorModel(true)
+            setIsErrorModel(true);
         }
     };
 
-    const saveRiwayatUser = async (prediction: { jenisTanaman: string; prediksi: string; }) => {
+    const saveRiwayatUser = async (prediction: {
+        jenisTanaman: string;
+        prediksi: {
+            ph: number | null;
+            ppm: number | null;
+            ketinggianAir: number | null;
+            label: string | null;
+        } | null;
+    }) => {
         try {
             await axios.post(route('riwayat-klasifikasi.store'), {
                 user_id: auth.user.id,
                 user: auth.user,
                 jenis_tanaman: prediction.jenisTanaman,
-                label: prediction.prediksi,
+                label: JSON.stringify(prediction.prediksi),
                 attribut: data.attribut,
                 kriteria: indikator.map((item) => item),
             });
@@ -185,12 +236,7 @@ export default function FormPrediction({ models, normalizationParams, transactio
     };
     return (
         <div className={'rounded-lg border bg-white p-6 shadow'}>
-            <Toast
-                open={isErrorModel}
-                onOpenChange={setIsErrorModel}
-                title='Terjadi Kesalahan Prediksi'
-                description={errorModel.text}
-            />
+            <Toast open={isErrorModel} onOpenChange={setIsErrorModel} title="Terjadi Kesalahan Prediksi" description={errorModel.text} />
             <h3 className="mb-4 text-lg font-semibold">Prediksi 4 Jenis Rumput Laut</h3>
             <div className={cn('grid grid-cols-1 gap-4', className)}>
                 <form onSubmit={predictAll} className="col-span-1">
@@ -259,7 +305,7 @@ export default function FormPrediction({ models, normalizationParams, transactio
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        <p className='text-gray-400 text-xs'>ph 1...5 itu kurang 6..7 itu sehat dan 8 itu brlebihan</p>
+                                        <p className="text-xs text-gray-400">ph 1...5 itu kurang 6..7 itu sehat dan 8 itu brlebihan</p>
                                     </div>
                                 );
                             }
@@ -284,22 +330,15 @@ export default function FormPrediction({ models, normalizationParams, transactio
                     </Button>
                 </form>
                 <div className="col-span-1">
-                    {(predictions.jenisTanaman !== null ||
-                        predictions.prediksi !== null) && (
-                            <div className="mt-6 space-y-4">
-                                <div className="grid grid-cols-1 gap-4">
-                                    {predictions.jenisTanaman && (
-                                        <PredictionCard
-                                            title={predictions.jenisTanaman}
-                                            value={predictions.prediksi}
-                                        />
-                                    )}
+                    {(predictions.jenisTanaman !== null || predictions.prediksi !== null) && (
+                        <div className="mt-6 space-y-4">
+                            <div className="grid grid-cols-1 gap-4">
+                                {predictions.jenisTanaman && <PredictionCard title={predictions.jenisTanaman} value={predictions.prediksi} />}
 
-                                    {/* 3 card lainnya untuk jenis yang lain */}
-                                </div>
-
+                                {/* 3 card lainnya untuk jenis yang lain */}
                             </div>
-                        )}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
@@ -311,12 +350,30 @@ const PredictionCard = ({
     value,
 }: {
     title: string;
-    value: string | null;
+    value: {
+        ph: number | null;
+        ppm: number | null;
+        ketinggianAir: number | null;
+        label: string | null;
+    } | null;
 }) => (
     <div className="rounded-lg bg-green-50 p-4">
-        <h4 className="font-medium text-green-800">{title}</h4>
-        <p className="mt-2 text-lg font-bold">
-            {value}
-        </p>
+        <h4 className="font-medium text-green-800" dangerouslySetInnerHTML={{__html : title}} />
+        <table>
+            <tbody>
+                <tr>
+                    <th className="border p-2 text-xs">PH</th>
+                    <th className="border p-2 text-xs">PPM</th>
+                    <th className="border p-2 text-xs">Ketinggian Air</th>
+                    <th className="border p-2 text-xs">Label</th>
+                </tr>
+                <tr>
+                    <td className="border p-2 text-center">{value?.ph?.toFixed(2)}</td>
+                    <td className="border p-2 text-center">{value?.ppm?.toFixed(2)}</td>
+                    <td className="border p-2 text-center">{value?.ketinggianAir?.toFixed(2)}</td>
+                    <td className="border p-2 text-center">{value?.label}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 );
