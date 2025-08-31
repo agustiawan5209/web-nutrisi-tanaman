@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import MainLayout from '@/layouts/guest/main-layout';
-import { ArrowRight, BarChart3, Brain, CheckCircle, Droplets, Target, Zap } from 'lucide-react';
+import { ArrowRight, BarChart3, Brain, CheckCircle, Droplets, Target, Zap, Leaf, Ruler, Gauge, Calendar, Eye } from 'lucide-react';
 
 export default function LandingPage() {
     const features = [
@@ -28,12 +28,55 @@ export default function LandingPage() {
         },
     ];
 
+    const hydroponicCriteria = [
+        {
+            icon: <Gauge className="h-6 w-6 text-blue-600" />,
+            title: 'pH (Power of Hydrogen)',
+            description: 'Menunjukkan tingkat keasaman/basa larutan. Ideal: 5.5 – 6.5 untuk sayuran daun.',
+            ideal: '5.5 – 6.5',
+            low: '< 5.5 (terlalu asam)',
+            high: '> 6.5 (terlalu basa)'
+        },
+        {
+            icon: <BarChart3 className="h-6 w-6 text-green-600" />,
+            title: 'PPM (Parts Per Million)',
+            description: 'Menunjukkan konsentrasi nutrisi dalam larutan. Selada: 800–1200 ppm, Kangkung: 900–1200 ppm.',
+            ideal: '800 – 1200 ppm',
+            low: '< 800 (nutrisi kurang)',
+            high: '> 1200 (nutrisi berlebih)'
+        },
+        {
+            icon: <Ruler className="h-6 w-6 text-purple-600" />,
+            title: 'Ketinggian Air',
+            description: 'Menentukan seberapa jauh akar terendam larutan. Pada sistem DFT: 3–5 cm.',
+            ideal: '3 – 5 cm',
+            low: '< 3 cm (akar kering)',
+            high: '> 5 cm (akar busuk)'
+        },
+        {
+            icon: <Calendar className="h-6 w-6 text-orange-600" />,
+            title: 'Umur Panen / Fase Pertumbuhan',
+            description: 'Setiap fase butuh pH & PPM berbeda. Bibit: 300–500 ppm, Vegetatif: 800–1200 ppm.',
+            ideal: 'Sesuai fase tanaman',
+            low: 'Pertumbuhan lambat',
+            high: 'Tanaman stres'
+        },
+        {
+            icon: <Eye className="h-6 w-6 text-red-600" />,
+            title: 'Gejala Visual Tanaman',
+            description: 'Indikator kesehatan tanaman melalui penampakan fisik.',
+            ideal: 'Daun hijau segar',
+            low: 'Daun kuning, lambat tumbuh',
+            high: 'Tepi daun mengering, daun tebal'
+        }
+    ];
+
     return (
         <MainLayout>
             {/* Hero Section */}
             <section className="px-4 py-20">
                 <div className="container mx-auto text-center">
-                    <Badge className="mb-4 bg-green-100 text-green-800 hover:bg-green-100">🚀 Teknologi AI Terdepan untuk Hidroponik</Badge>
+                    <Badge className="mb-4 bg-green-100 text-green-800 hover:bg-green-100">🌱 Teknologi AI untuk Hidroponik Modern</Badge>
                     <h1 className="mb-6 text-4xl leading-tight font-bold text-gray-900 md:text-6xl">
                         Sistem Pendukung Keputusan untuk
                         <span className="block text-green-600">Nutrisi Tanaman Hidroponik</span>
@@ -51,70 +94,169 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Importance of Hydroponics Nutrition */}
-            <section className="bg-white/50 px-4 py-16">
+            {/* About Hydroponics Section */}
+            <section id="hidroponik" className="bg-white px-4 py-16">
                 <div className="container mx-auto">
                     <div className="grid items-center gap-12 md:grid-cols-2">
                         <div>
-                            <h2 className="mb-6 text-3xl font-bold text-gray-900">Parameter Penting dalam Sistem Hidroponik</h2>
+                            <h2 className="mb-6 text-3xl font-bold text-gray-900">Apa Itu Hidroponik?</h2>
                             <p className="mb-6 leading-relaxed text-gray-600">
-                                Keberhasilan budidaya hidroponik bergantung pada pengelolaan parameter yang tepat. Monitoring yang cermat terhadap
-                                kondisi lingkungan sangat menentukan kesehatan tanaman dan hasil panen.
+                                Hidroponik adalah metode budidaya tanaman tanpa menggunakan tanah, melainkan memanfaatkan larutan nutrisi mineral dalam air.
+                                Akar tanaman langsung menyerap nutrisi dari air yang sudah diberi pupuk khusus hidroponik (AB Mix atau formulasi lain).
                             </p>
                             <div className="space-y-4">
+                                <h3 className="text-xl font-semibold text-gray-900">Keuntungan Hidroponik:</h3>
                                 <div className="flex items-start space-x-3">
                                     <CheckCircle className="mt-1 h-6 w-6 flex-shrink-0 text-green-600" />
                                     <div>
-                                        <h3 className="font-semibold text-gray-900">pH Air (5.5 - 6.5)</h3>
-                                        <p className="text-gray-600">Memastikan tingkat keasaman optimal untuk penyerapan nutrisi</p>
+                                        <p className="text-gray-600">Efisiensi lahan (bisa di lahan sempit atau perkotaan)</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start space-x-3">
                                     <CheckCircle className="mt-1 h-6 w-6 flex-shrink-0 text-green-600" />
                                     <div>
-                                        <h3 className="font-semibold text-gray-900">PPM (500-1500)</h3>
-                                        <p className="text-gray-600">Mengukur konsentrasi nutrisi dalam larutan untuk pertumbuhan optimal</p>
+                                        <p className="text-gray-600">Penggunaan air lebih hemat (karena sirkulasi)</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start space-x-3">
                                     <CheckCircle className="mt-1 h-6 w-6 flex-shrink-0 text-green-600" />
                                     <div>
-                                        <h3 className="font-semibold text-gray-900">Ketinggian Air</h3>
-                                        <p className="text-gray-600">Mengatur level air sesuai sistem dan fase pertumbuhan tanaman</p>
+                                        <p className="text-gray-600">Pertumbuhan tanaman lebih cepat & seragam</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start space-x-3">
                                     <CheckCircle className="mt-1 h-6 w-6 flex-shrink-0 text-green-600" />
                                     <div>
-                                        <h3 className="font-semibold text-gray-900">Monitoring Gejala</h3>
-                                        <p className="text-gray-600">Mendeteksi dini gejala kekurangan nutrisi atau penyakit</p>
+                                        <p className="text-gray-600">Risiko hama tanah berkurang</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start space-x-3">
                                     <CheckCircle className="mt-1 h-6 w-6 flex-shrink-0 text-green-600" />
                                     <div>
-                                        <h3 className="font-semibold text-gray-900">Umur Panen</h3>
-                                        <p className="text-gray-600">Menentukan waktu panen optimal berdasarkan jenis tanaman</p>
+                                        <p className="text-gray-600">Bisa dikontrol nutrisi sesuai kebutuhan tanaman</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div className="relative">
                             <div className="rounded-2xl bg-gradient-to-br from-green-400 to-blue-500 p-8 text-white">
-                                <Droplets className="mb-4 h-16 w-16 opacity-80" />
-                                <h3 className="mb-4 text-2xl font-bold">Kontrol Parameter Kunci</h3>
+                                <Leaf className="mb-4 h-16 w-16 opacity-80" />
+                                <h3 className="mb-4 text-2xl font-bold">Pertanian Masa Depan</h3>
                                 <p className="text-green-100">
-                                    Sistem kami memonitor secara real-time parameter kritikal hidroponik: pH air, tingkat PPM, ketinggian air, gejala
-                                    tanaman, dan prediksi umur panen. Dengan teknologi canggih, tanaman mendapatkan kondisi optimal untuk pertumbuhan
-                                    maksimal dan hasil panen yang berkualitas.
+                                    Hidroponik merupakan solusi pertanian modern yang efisien dan berkelanjutan,
+                                    terutama di daerah perkotaan dengan keterbatasan lahan. Dengan sistem yang terkontrol,
+                                    tanaman dapat tumbuh optimal dengan penggunaan sumber daya yang minimal.
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
+
+            {/* Hydroponic Criteria Section */}
+            <section id='kriteria' className="bg-gray-50 px-4 py-16">
+                <div className="container mx-auto">
+                    <div className="mb-12 text-center">
+                        <h2 className="mb-4 text-3xl font-bold text-gray-900">Kriteria Penting dalam Sistem Hidroponik</h2>
+                        <p className="mx-auto max-w-3xl text-xl text-gray-600">
+                            Dalam penelitian (terutama untuk SPK nutrisi), biasanya dipakai parameter utama yang menentukan kondisi tanaman:
+                        </p>
+                    </div>
+
+                    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                        {hydroponicCriteria.map((criteria, index) => (
+                            <Card key={index} className="border-0 bg-white shadow-md transition-shadow hover:shadow-lg">
+                                <CardHeader>
+                                    <div className="mb-4 flex items-center">
+                                        <div className="mr-3 rounded-full bg-gray-100 p-2">
+                                            {criteria.icon}
+                                        </div>
+                                        <CardTitle className="text-lg">{criteria.title}</CardTitle>
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="mb-4 text-gray-600">{criteria.description}</p>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between">
+                                            <span className="font-medium text-green-600">Ideal:</span>
+                                            <span>{criteria.ideal}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="font-medium text-blue-600">Kurang:</span>
+                                            <span>{criteria.low}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="font-medium text-red-600">Berlebih:</span>
+                                            <span>{criteria.high}</span>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Summary Table Section */}
+            <section id="parameter-utama" className="bg-white px-4 py-16">
+                <div className="container mx-auto">
+                    <div className="mb-12 text-center">
+                        <h2 className="mb-4 text-3xl font-bold text-gray-900">Ringkasan Kriteria Hidroponik untuk Sayuran Daun</h2>
+                        <p className="mx-auto max-w-3xl text-xl text-gray-600">
+                            Parameter utama yang menentukan kesehatan dan pertumbuhan tanaman hidroponik
+                        </p>
+                    </div>
+
+                    <div className="overflow-x-auto rounded-lg shadow-md">
+                        <table className="w-full border-collapse bg-white text-left">
+                            <thead className="bg-green-50">
+                                <tr>
+                                    <th className="px-6 py-4 font-semibold text-gray-900">Kriteria</th>
+                                    <th className="px-6 py-4 font-semibold text-gray-900">Ideal</th>
+                                    <th className="px-6 py-4 font-semibold text-gray-900">Kurang</th>
+                                    <th className="px-6 py-4 font-semibold text-gray-900">Berlebihan</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                <tr>
+                                    <td className="px-6 py-4 font-medium">pH</td>
+                                    <td className="px-6 py-4 text-green-600">5.5 – 6.5</td>
+                                    <td className="px-6 py-4 text-blue-600">&lt; 5.5 (terlalu asam)</td>
+                                    <td className="px-6 py-4 text-red-600">&gt; 6.5 (terlalu basa)</td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                    <td className="px-6 py-4 font-medium">PPM (Selada)</td>
+                                    <td className="px-6 py-4 text-green-600">800 – 1200 ppm</td>
+                                    <td className="px-6 py-4 text-blue-600">&lt; 800 (nutrisi kurang)</td>
+                                    <td className="px-6 py-4 text-red-600">&gt; 1200 (nutrisi berlebih)</td>
+                                </tr>
+                                <tr>
+                                    <td className="px-6 py-4 font-medium">Ketinggian air</td>
+                                    <td className="px-6 py-4 text-green-600">3 – 5 cm</td>
+                                    <td className="px-6 py-4 text-blue-600">&lt; 3 cm (akar kering)</td>
+                                    <td className="px-6 py-4 text-red-600">&gt; 5 cm (akar busuk)</td>
+                                </tr>
+                                <tr className="bg-gray-50">
+                                    <td className="px-6 py-4 font-medium">Gejala visual</td>
+                                    <td className="px-6 py-4 text-green-600">daun hijau segar</td>
+                                    <td className="px-6 py-4 text-blue-600">daun kuning, lambat tumbuh</td>
+                                    <td className="px-6 py-4 text-red-600">tepi daun mengering, daun tebal</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="mt-8 text-center">
+                        <p className="text-gray-600">
+                            Dalam sistem pendukung keputusan (SPK) untuk hidroponik, kriteria utama yang biasanya digunakan: pH, PPM/EC,
+                            Ketinggian air, Umur panen, Gejala tanaman, dan Jenis tanaman.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
             {/* How AI Works */}
-            <section id="how-it-works" className="px-4 py-16">
+            <section id="how-it-works" className="px-4 py-16 bg-gray-50">
                 <div className="container mx-auto">
                     <div className="mb-12 text-center">
                         <h2 className="mb-4 text-3xl font-bold text-gray-900">Bagaimana AI dan Random Forest Bekerja?</h2>
@@ -172,7 +314,7 @@ export default function LandingPage() {
             </section>
 
             {/* Features */}
-            <section id="features" className="bg-gray-50 px-4 py-16">
+            <section id="features" className="bg-white px-4 py-16">
                 <div className="container mx-auto">
                     <div className="mb-12 text-center">
                         <h2 className="mb-4 text-3xl font-bold text-gray-900">Fitur Unggulan Sistem</h2>
@@ -183,7 +325,7 @@ export default function LandingPage() {
 
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                         {features.map((feature, index) => (
-                            <Card key={index} className="border-0 bg-white transition-shadow hover:shadow-lg">
+                            <Card key={index} className="border-0 bg-white shadow-md transition-shadow hover:shadow-lg">
                                 <CardHeader className="text-center">
                                     <div className="mx-auto mb-4">{feature.icon}</div>
                                     <CardTitle className="text-lg">{feature.title}</CardTitle>

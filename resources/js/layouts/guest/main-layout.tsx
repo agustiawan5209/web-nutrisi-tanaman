@@ -35,6 +35,15 @@ export default function MainLayout({ children }: PropsWithChildren<{}>) {
                     ) : (
                         <>
                             <nav className="hidden space-x-6 md:flex">
+                                <a href="#hidroponik" className="text-gray-600 transition-colors hover:text-green-600">
+                                    Hidroponik
+                                </a>
+                                <a href="#kriteria" className="text-gray-600 transition-colors hover:text-green-600">
+                                    Kriteria
+                                </a>
+                                <a href="#parameter-utama" className="text-gray-600 transition-colors hover:text-green-600">
+                                    Parameter
+                                </a>
                                 <a href="#features" className="text-gray-600 transition-colors hover:text-green-600">
                                     Fitur
                                 </a>
