@@ -40,13 +40,7 @@ type Dataset = {
     label: string;
     attribut: string[];
 };
-export default function FormPrediction({
-    models,
-    indikator,
-    className,
-    opsiGejala,
-    jenisTanaman,
-}: PredictModelsProps) {
+export default function FormPrediction({ models, indikator, className, opsiGejala, jenisTanaman }: PredictModelsProps) {
     const { auth } = usePage<SharedData>().props;
     const [errorModel, setErrorModel] = useState<{ text: string; status: boolean }>({ text: '', status: false });
     const [isErrorModel, setIsErrorModel] = useState<boolean>(false);
@@ -237,7 +231,7 @@ export default function FormPrediction({
     return (
         <div className={'rounded-lg border bg-white p-6 shadow'}>
             <Toast open={isErrorModel} onOpenChange={setIsErrorModel} title="Terjadi Kesalahan Prediksi" description={errorModel.text} />
-            <h3 className="mb-4 text-lg font-semibold">Prediksi 4 Jenis Rumput Laut</h3>
+            <h3 className="mb-4 text-lg font-semibold">Nutrisi Tanaman</h3>
             <div className={cn('grid grid-cols-1 gap-4', className)}>
                 <form onSubmit={predictAll} className="col-span-1">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -358,7 +352,7 @@ const PredictionCard = ({
     } | null;
 }) => (
     <div className="rounded-lg bg-green-50 p-4">
-        <h4 className="font-medium text-green-800" dangerouslySetInnerHTML={{__html : title}} />
+        <h4 className="font-medium text-green-800" dangerouslySetInnerHTML={{ __html: title }} />
         <table>
             <tbody>
                 <tr>
